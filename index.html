@@ -3,91 +3,47 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Omkar Shirse — Developer</title>
+<title>Omkar Shirse, Embedded Developer</title>
 
-<!-- Material Symbols + Google Fonts (MD3) -->
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Display:wght@400;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
 
 <style>
-/* ── MD3 Color Tokens (dark scheme) ─────────────────────────────────────── */
 :root {
-  /* Surface */
-  --md-sys-color-background:        #111318;
-  --md-sys-color-surface:           #111318;
-  --md-sys-color-surface-container-lowest: #0c0e13;
-  --md-sys-color-surface-container-low:    #191c22;
-  --md-sys-color-surface-container:        #1d2026;
-  --md-sys-color-surface-container-high:   #272a31;
-  --md-sys-color-surface-container-highest:#32353c;
-  --md-sys-color-surface-variant:          #44474e;
-
-  /* Primary – Amber/Gold brand */
-  --md-sys-color-primary:           #f8bc4c;
-  --md-sys-color-on-primary:        #402d00;
-  --md-sys-color-primary-container: #5c4200;
-  --md-sys-color-on-primary-container: #ffdea1;
-
-  /* Secondary */
-  --md-sys-color-secondary:         #c8c6b4;
-  --md-sys-color-on-secondary:      #31312a;
-  --md-sys-color-secondary-container:#48473f;
-  --md-sys-color-on-secondary-container:#e4e3d0;
-
-  /* On-surface */
-  --md-sys-color-on-surface:        #e3e2e9;
-  --md-sys-color-on-surface-variant:#c5c6d0;
-  --md-sys-color-outline:           #8f909a;
-  --md-sys-color-outline-variant:   #44474e;
-
-  /* Error */
-  --md-sys-color-error:             #ffb4ab;
-
-  /* Typescale */
-  --md-sys-typescale-display-large:   700 57px/64px 'Roboto', sans-serif;
-  --md-sys-typescale-headline-large:  400 32px/40px 'Roboto', sans-serif;
-  --md-sys-typescale-headline-medium: 400 28px/36px 'Roboto', sans-serif;
-  --md-sys-typescale-title-large:     400 22px/28px 'Roboto', sans-serif;
-  --md-sys-typescale-title-medium:    500 16px/24px 'Roboto', sans-serif;
-  --md-sys-typescale-label-large:     500 14px/20px 'Roboto', sans-serif;
-  --md-sys-typescale-body-large:      400 16px/24px 'Roboto', sans-serif;
-  --md-sys-typescale-body-medium:     400 14px/20px 'Roboto', sans-serif;
-  --md-sys-typescale-body-small:      400 12px/16px 'Roboto', sans-serif;
-
-  /* Shape */
-  --md-sys-shape-corner-none:   0px;
-  --md-sys-shape-corner-xs:     4px;
-  --md-sys-shape-corner-sm:     8px;
-  --md-sys-shape-corner-md:     12px;
-  --md-sys-shape-corner-lg:     16px;
-  --md-sys-shape-corner-xl:     28px;
-  --md-sys-shape-corner-full:   9999px;
-
-  /* Elevation overlays (dark) */
-  --md-elevation-1: rgba(248,188,76,0.05);
-  --md-elevation-2: rgba(248,188,76,0.08);
-  --md-elevation-3: rgba(248,188,76,0.11);
+  --md-bg:              #111318;
+  --md-surface-low:     #191c22;
+  --md-surface:         #1d2026;
+  --md-surface-high:    #272a31;
+  --md-surface-highest: #32353c;
+  --md-primary:         #f8bc4c;
+  --md-on-primary:      #402d00;
+  --md-primary-cont:    #5c4200;
+  --md-on-primary-cont: #ffdea1;
+  --md-on-surface:      #e3e2e9;
+  --md-on-surface-var:  #c5c6d0;
+  --md-outline:         #8f909a;
+  --md-outline-var:     #44474e;
+  --md-shape-sm:  8px;
+  --md-shape-md:  12px;
+  --md-shape-lg:  16px;
+  --md-shape-xl:  28px;
+  --md-shape-full: 9999px;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
-
 body {
-  background: var(--md-sys-color-background);
-  color: var(--md-sys-color-on-surface);
+  background: var(--md-bg);
+  color: var(--md-on-surface);
   font: 400 16px/24px 'Roboto', sans-serif;
   overflow-x: hidden;
 }
-
-/* ── Utility ─────────────────────────────────────────────────────────────── */
 a { color: inherit; text-decoration: none; }
-
 .material-icons-round { vertical-align: middle; }
 
-/* ── Top App Bar (MD3) ───────────────────────────────────────────────────── */
+/* Top App Bar */
 .top-app-bar {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -97,37 +53,30 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  background: var(--md-sys-color-surface-container-low);
+  background: var(--md-surface-low);
   backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  border-bottom: 1px solid var(--md-outline-var);
 }
-
 .app-bar-title {
   font: 500 22px/28px 'Roboto', sans-serif;
-  color: var(--md-sys-color-on-surface);
-  letter-spacing: 0;
+  color: var(--md-on-surface);
 }
-.app-bar-title span { color: var(--md-sys-color-primary); }
+.app-bar-title span { color: var(--md-primary); }
 
-.nav-links {
-  display: flex;
-  gap: 8px;
-  list-style: none;
-}
-
+.nav-links { display: flex; gap: 8px; list-style: none; }
 .nav-links a {
-  font: var(--md-sys-typescale-label-large);
-  color: var(--md-sys-color-on-surface-variant);
+  font: 500 14px/20px 'Roboto', sans-serif;
+  color: var(--md-on-surface-var);
   padding: 8px 16px;
-  border-radius: var(--md-sys-shape-corner-full);
+  border-radius: var(--md-shape-full);
   transition: background 0.2s, color 0.2s;
 }
 .nav-links a:hover {
   background: rgba(248,188,76,0.08);
-  color: var(--md-sys-color-primary);
+  color: var(--md-primary);
 }
 
-/* ── Hero ────────────────────────────────────────────────────────────────── */
+/* Hero */
 .hero {
   min-height: 100vh;
   display: flex;
@@ -135,388 +84,240 @@ a { color: inherit; text-decoration: none; }
   padding: 96px 24px 64px;
   max-width: 960px;
   margin: 0 auto;
-  gap: 48px;
-  flex-wrap: wrap;
 }
-
 .hero-eyebrow {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
+  background: var(--md-primary-cont);
+  color: var(--md-on-primary-cont);
   padding: 6px 16px;
-  border-radius: var(--md-sys-shape-corner-full);
-  font: var(--md-sys-typescale-label-large);
+  border-radius: var(--md-shape-full);
+  font: 500 14px/20px 'Roboto', sans-serif;
   margin-bottom: 24px;
 }
-
 .hero-name {
   font: 700 clamp(40px,8vw,72px)/1 'Roboto', sans-serif;
-  color: var(--md-sys-color-on-surface);
+  color: var(--md-on-surface);
   letter-spacing: -1px;
   margin-bottom: 12px;
 }
-.hero-name .accent { color: var(--md-sys-color-primary); }
-
+.hero-name .accent { color: var(--md-primary); }
 .hero-role {
-  font: var(--md-sys-typescale-title-large);
-  color: var(--md-sys-color-on-surface-variant);
+  font: 400 22px/28px 'Roboto', sans-serif;
+  color: var(--md-on-surface-var);
   margin-bottom: 20px;
 }
-
 .hero-desc {
-  font: var(--md-sys-typescale-body-large);
-  color: var(--md-sys-color-on-surface-variant);
+  font: 400 16px/24px 'Roboto', sans-serif;
+  color: var(--md-on-surface-var);
   max-width: 560px;
   line-height: 1.75;
   margin-bottom: 36px;
 }
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
-.hero-actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-/* ── MD3 Buttons ─────────────────────────────────────────────────────────── */
+/* Buttons */
 .btn-filled {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  display: inline-flex; align-items: center; gap: 8px;
   padding: 10px 24px;
-  border-radius: var(--md-sys-shape-corner-full);
-  background: var(--md-sys-color-primary);
-  color: var(--md-sys-color-on-primary);
-  font: var(--md-sys-typescale-label-large);
-  cursor: pointer;
-  border: none;
-  transition: box-shadow 0.2s, filter 0.2s;
+  border-radius: var(--md-shape-full);
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+  font: 500 14px/20px 'Roboto', sans-serif;
+  border: none; cursor: pointer;
+  transition: filter 0.2s, box-shadow 0.2s;
 }
 .btn-filled:hover { filter: brightness(1.08); box-shadow: 0 2px 8px rgba(248,188,76,0.3); }
 
 .btn-outlined {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  display: inline-flex; align-items: center; gap: 8px;
   padding: 10px 24px;
-  border-radius: var(--md-sys-shape-corner-full);
-  border: 1px solid var(--md-sys-color-outline);
-  color: var(--md-sys-color-primary);
+  border-radius: var(--md-shape-full);
+  border: 1px solid var(--md-outline);
+  color: var(--md-primary);
   background: transparent;
-  font: var(--md-sys-typescale-label-large);
+  font: 500 14px/20px 'Roboto', sans-serif;
   cursor: pointer;
   transition: background 0.2s;
 }
 .btn-outlined:hover { background: rgba(248,188,76,0.08); }
 
-/* ── Section wrapper ─────────────────────────────────────────────────────── */
-.section-wrap {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 80px 24px;
-}
-
+/* Section */
+.section-wrap { max-width: 960px; margin: 0 auto; padding: 80px 24px; }
 .section-eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font: var(--md-sys-typescale-label-large);
-  color: var(--md-sys-color-primary);
+  display: flex; align-items: center; gap: 8px;
+  font: 500 14px/20px 'Roboto', sans-serif;
+  color: var(--md-primary);
   margin-bottom: 8px;
 }
-
 .section-title {
   font: 700 32px/40px 'Roboto', sans-serif;
-  color: var(--md-sys-color-on-surface);
+  color: var(--md-on-surface);
   margin-bottom: 40px;
 }
+.divider { height: 1px; background: var(--md-outline-var); }
 
-/* ── MD3 Divider ─────────────────────────────────────────────────────────── */
-.divider {
-  height: 1px;
-  background: var(--md-sys-color-outline-variant);
-  margin: 0;
-}
-
-/* ── About ───────────────────────────────────────────────────────────────── */
+/* About */
 .about-grid {
   display: grid;
   grid-template-columns: 3fr 2fr;
   gap: 48px;
   align-items: start;
 }
-
 .about-text p {
-  font: var(--md-sys-typescale-body-large);
-  color: var(--md-sys-color-on-surface-variant);
+  font: 400 16px/24px 'Roboto', sans-serif;
+  color: var(--md-on-surface-var);
   line-height: 1.8;
   margin-bottom: 16px;
 }
-.about-text p strong {
-  color: var(--md-sys-color-primary);
-  font-weight: 500;
-}
+.about-text p strong { color: var(--md-primary); font-weight: 500; }
 
-/* MD3 Surface Card */
 .md3-card {
-  background: var(--md-sys-color-surface-container);
-  border-radius: var(--md-sys-shape-corner-lg);
+  background: var(--md-surface);
+  border-radius: var(--md-shape-lg);
   padding: 20px;
-  border: 1px solid var(--md-sys-color-outline-variant);
+  border: 1px solid var(--md-outline-var);
   transition: box-shadow 0.2s;
 }
-.md3-card:hover {
-  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-  background: var(--md-sys-color-surface-container-high);
+.md3-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.4); background: var(--md-surface-high); }
+.md3-card-label {
+  font: 400 12px/16px 'Roboto', sans-serif;
+  color: var(--md-on-surface-var);
+  margin-bottom: 4px;
+}
+.md3-card-value {
+  font: 500 16px/24px 'Roboto', sans-serif;
+  color: var(--md-on-surface);
+}
+.md3-card-sub {
+  font: 400 12px/16px 'Roboto', sans-serif;
+  color: var(--md-primary);
+  margin-top: 4px;
 }
 
-/* ── Skills ──────────────────────────────────────────────────────────────── */
-.skills-bg {
-  background: var(--md-sys-color-surface-container-low);
-  border-top: 1px solid var(--md-sys-color-outline-variant);
-  border-bottom: 1px solid var(--md-sys-color-outline-variant);
-}
-
-.skill-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-  margin-top: 40px;
-}
-
-.skill-card {
-  background: var(--md-sys-color-surface-container);
-  border-radius: var(--md-sys-shape-corner-lg);
-  padding: 20px;
-  border: 1px solid var(--md-sys-color-outline-variant);
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.skill-card:hover {
-  border-color: var(--md-sys-color-primary);
-  box-shadow: 0 2px 12px rgba(248,188,76,0.15);
-}
-
-.skill-card-title {
-  font: var(--md-sys-typescale-title-medium);
-  color: var(--md-sys-color-primary);
-  margin-bottom: 14px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.chip-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-/* MD3 Suggestion Chip */
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
-  border-radius: var(--md-sys-shape-corner-full);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  background: var(--md-sys-color-surface-container-high);
-  color: var(--md-sys-color-on-surface);
-  font: var(--md-sys-typescale-label-large);
-}
-
-/* ── Projects ────────────────────────────────────────────────────────────── */
+/* Projects */
 .projects-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
 }
-
 .project-card {
-  background: var(--md-sys-color-surface-container);
-  border-radius: var(--md-sys-shape-corner-xl);
+  background: var(--md-surface);
+  border-radius: var(--md-shape-xl);
   padding: 24px;
-  border: 1px solid var(--md-sys-color-outline-variant);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  border: 1px solid var(--md-outline-var);
+  display: flex; flex-direction: column; gap: 12px;
   transition: box-shadow 0.25s, border-color 0.25s, transform 0.25s;
-  position: relative;
-  overflow: hidden;
 }
 .project-card:hover {
-  border-color: var(--md-sys-color-primary);
+  border-color: var(--md-primary);
   box-shadow: 0 6px 24px rgba(0,0,0,0.5);
   transform: translateY(-4px);
 }
-
 .project-card.featured {
-  background: var(--md-sys-color-primary-container);
-  border-color: var(--md-sys-color-primary);
+  background: var(--md-primary-cont);
+  border-color: var(--md-primary);
   grid-column: 1 / -1;
 }
 .project-card.featured .project-title,
-.project-card.featured .project-desc {
-  color: var(--md-sys-color-on-primary-container);
-}
+.project-card.featured .project-desc { color: var(--md-on-primary-cont); }
 
 .project-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: var(--md-sys-color-primary);
-  color: var(--md-sys-color-on-primary);
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--md-primary);
+  color: var(--md-on-primary);
   padding: 4px 12px;
-  border-radius: var(--md-sys-shape-corner-full);
-  font: var(--md-sys-typescale-body-small);
-  font-weight: 500;
+  border-radius: var(--md-shape-full);
+  font: 500 12px/16px 'Roboto', sans-serif;
   width: fit-content;
 }
-
-.project-title {
-  font: 700 20px/28px 'Roboto', sans-serif;
-  color: var(--md-sys-color-on-surface);
-}
-
+.project-title { font: 700 20px/28px 'Roboto', sans-serif; color: var(--md-on-surface); }
 .project-desc {
-  font: var(--md-sys-typescale-body-medium);
-  color: var(--md-sys-color-on-surface-variant);
-  line-height: 1.75;
-  flex: 1;
+  font: 400 14px/20px 'Roboto', sans-serif;
+  color: var(--md-on-surface-var);
+  line-height: 1.75; flex: 1;
 }
-
-.project-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 4px;
-}
-
+.project-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
 .project-chip {
   padding: 4px 10px;
-  border-radius: var(--md-sys-shape-corner-full);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  background: var(--md-sys-color-surface-container-high);
-  color: var(--md-sys-color-on-surface-variant);
-  font: var(--md-sys-typescale-body-small);
+  border-radius: var(--md-shape-full);
+  border: 1px solid var(--md-outline-var);
+  background: var(--md-surface-high);
+  color: var(--md-on-surface-var);
+  font: 400 12px/16px 'Roboto', sans-serif;
 }
 
-/* ── Experience ──────────────────────────────────────────────────────────── */
-.exp-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
+/* Experience */
+.exp-list { display: flex; flex-direction: column; }
 .exp-card {
   display: grid;
   grid-template-columns: 160px 1fr;
   gap: 24px;
   padding: 28px 0;
-  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  border-bottom: 1px solid var(--md-outline-var);
   align-items: start;
 }
 .exp-card:last-child { border-bottom: none; }
-
 .exp-date {
-  font: var(--md-sys-typescale-body-small);
-  color: var(--md-sys-color-on-surface-variant);
-  padding-top: 4px;
-  line-height: 1.8;
+  font: 400 12px/16px 'Roboto', sans-serif;
+  color: var(--md-on-surface-var);
+  padding-top: 4px; line-height: 1.8;
 }
+.exp-role { font: 700 20px/28px 'Roboto', sans-serif; color: var(--md-on-surface); margin-bottom: 4px; }
+.exp-company { font: 500 14px/20px 'Roboto', sans-serif; color: var(--md-primary); margin-bottom: 12px; }
+.exp-desc { font: 400 14px/20px 'Roboto', sans-serif; color: var(--md-on-surface-var); line-height: 1.75; }
 
-.exp-role {
-  font: 700 20px/28px 'Roboto', sans-serif;
-  color: var(--md-sys-color-on-surface);
-  margin-bottom: 4px;
-}
-
-.exp-company {
-  font: var(--md-sys-typescale-body-medium);
-  color: var(--md-sys-color-primary);
-  margin-bottom: 12px;
-  font-weight: 500;
-}
-
-.exp-desc {
-  font: var(--md-sys-typescale-body-medium);
-  color: var(--md-sys-color-on-surface-variant);
-  line-height: 1.75;
-}
-
-/* ── Contact ─────────────────────────────────────────────────────────────── */
+/* Contact */
 .contact-bg {
-  background: var(--md-sys-color-surface-container-low);
-  border-top: 1px solid var(--md-sys-color-outline-variant);
+  background: var(--md-surface-low);
+  border-top: 1px solid var(--md-outline-var);
 }
-
 .contact-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
-  align-items: center;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 48px; align-items: center;
 }
-
 .contact-desc {
-  font: var(--md-sys-typescale-body-large);
-  color: var(--md-sys-color-on-surface-variant);
-  line-height: 1.75;
-  margin-bottom: 28px;
+  font: 400 16px/24px 'Roboto', sans-serif;
+  color: var(--md-on-surface-var);
+  line-height: 1.75; margin-bottom: 28px;
 }
-
-.contact-link-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
+.contact-link-list { display: flex; flex-direction: column; gap: 12px; }
 .contact-link {
-  display: flex;
-  align-items: center;
-  gap: 16px;
+  display: flex; align-items: center; gap: 16px;
   padding: 16px 20px;
-  border-radius: var(--md-sys-shape-corner-lg);
-  background: var(--md-sys-color-surface-container);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  color: var(--md-sys-color-on-surface);
-  font: var(--md-sys-typescale-body-medium);
-  transition: background 0.2s, border-color 0.2s;
+  border-radius: var(--md-shape-lg);
+  background: var(--md-surface);
+  border: 1px solid var(--md-outline-var);
+  color: var(--md-on-surface);
+  font: 400 14px/20px 'Roboto', sans-serif;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
 .contact-link:hover {
-  background: var(--md-sys-color-surface-container-high);
-  border-color: var(--md-sys-color-primary);
-  color: var(--md-sys-color-primary);
+  background: var(--md-surface-high);
+  border-color: var(--md-primary);
+  color: var(--md-primary);
 }
 
-/* ── Footer ──────────────────────────────────────────────────────────────── */
+/* Footer */
 footer {
   padding: 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-top: 1px solid var(--md-sys-color-outline-variant);
-  max-width: 960px;
-  margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px solid var(--md-outline-var);
+  max-width: 960px; margin: 0 auto;
 }
-footer p {
-  font: var(--md-sys-typescale-body-small);
-  color: var(--md-sys-color-on-surface-variant);
-}
-footer span { color: var(--md-sys-color-primary); }
+footer p { font: 400 12px/16px 'Roboto', sans-serif; color: var(--md-on-surface-var); }
+footer span { color: var(--md-primary); }
 
-/* ── Scroll reveal ───────────────────────────────────────────────────────── */
-.reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
+/* Scroll reveal */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
-/* ── Mobile ──────────────────────────────────────────────────────────────── */
+/* Mobile */
 @media (max-width: 768px) {
   .top-app-bar { padding: 0 16px; }
   .nav-links { display: none; }
-  .hero { padding: 88px 16px 48px; flex-direction: column; }
+  .hero { padding: 88px 16px 48px; }
   .section-wrap { padding: 56px 16px; }
   .about-grid { grid-template-columns: 1fr; gap: 24px; }
   .exp-card { grid-template-columns: 1fr; gap: 8px; }
@@ -529,13 +330,12 @@ footer span { color: var(--md-sys-color-primary); }
 </head>
 <body>
 
-<!-- TOP APP BAR (MD3) -->
+<!-- TOP APP BAR -->
 <header class="top-app-bar">
   <div class="app-bar-title">Omkar <span>Shirse</span></div>
   <nav>
     <ul class="nav-links">
       <li><a href="#about">About</a></li>
-      <li><a href="#skills">Skills</a></li>
       <li><a href="#projects">Projects</a></li>
       <li><a href="#experience">Experience</a></li>
       <li><a href="#contact">Contact</a></li>
@@ -548,13 +348,13 @@ footer span { color: var(--md-sys-color-primary); }
   <div class="hero-content">
     <div class="hero-eyebrow">
       <span class="material-icons-round" style="font-size:18px">memory</span>
-      Embedded Systems · Firmware · Robotics
+      Embedded Systems · Firmware · Frontend
     </div>
     <h1 class="hero-name">Omkar<br><span class="accent">Shirse</span></h1>
-    <p class="hero-role">Embedded Developer — where software meets silicon</p>
+    <p class="hero-role">Embedded Developer, where software meets silicon</p>
     <p class="hero-desc">
       I write firmware, wire up sensors, and make hardware do things.
-      Working at the intersection of embedded C, real-time systems, and robotics —
+      Working at the intersection of C, Rust, real-time systems, and hardware integration,
       close to the metal, where every byte and every microsecond matters.
     </p>
     <div class="hero-actions">
@@ -566,7 +366,7 @@ footer span { color: var(--md-sys-color-primary); }
         <span class="material-icons-round" style="font-size:18px">code</span>
         GitHub
       </a>
-      <a href="https://linkedin.com/in/omkar-shirse-6520b1259" target="_blank" class="btn-outlined">
+      <a href="https://linkedin.com/in/omkarshirse" target="_blank" class="btn-outlined">
         <span class="material-icons-round" style="font-size:18px">link</span>
         LinkedIn
       </a>
@@ -586,140 +386,34 @@ footer span { color: var(--md-sys-color-primary); }
   <div class="about-grid">
     <div class="about-text reveal">
       <p>
-        Final-year B.Tech student in <strong>Electronics &amp; Telecommunication</strong> at
-        MGM's College of Engineering, Nanded. I got pulled deep into embedded systems early — and never looked back.
+        Final-year B.Tech student in <strong>Electronics and Telecommunication</strong> at
+        MGM's College of Engineering, Nanded. I got pulled deep into embedded systems early and never looked back.
       </p>
       <p>
         My work spans <strong>firmware development</strong>, hardware-software integration,
-        FPGA design in VHDL, and robotics with ROS2 and Gazebo. I like systems
-        where you can trace exactly why something works — or doesn't.
+        and FPGA design in VHDL. I write low-level drivers in <strong>C and Rust</strong>,
+        preferring to understand exactly what the hardware is doing at every layer.
       </p>
       <p>
         On the side I do <strong>frontend development</strong> and <strong>video editing</strong>
-        in DaVinci Resolve — documentation videos, short-form content.
-        Turns out debugging a color grade isn't that different from debugging a state machine.
+        in DaVinci Resolve for documentation videos and short-form content.
+        Debugging a color grade turns out to be a lot like debugging a state machine.
       </p>
     </div>
     <div class="reveal">
       <div class="md3-card" style="margin-bottom:16px;">
-        <div style="font:var(--md-sys-typescale-body-small);color:var(--md-sys-color-on-surface-variant);margin-bottom:4px;">Education</div>
-        <div style="font:500 16px/24px 'Roboto',sans-serif;color:var(--md-sys-color-on-surface);">B.Tech — Electronics &amp; Telecom</div>
-        <div style="font:var(--md-sys-typescale-body-small);color:var(--md-sys-color-primary);margin-top:4px;">MGM's CoE, Nanded · 2022–2026</div>
-      </div>
-      <div class="md3-card" style="margin-bottom:16px;">
-        <div style="font:var(--md-sys-typescale-body-small);color:var(--md-sys-color-on-surface-variant);margin-bottom:4px;">Published Research</div>
-        <div style="font:500 16px/24px 'Roboto',sans-serif;color:var(--md-sys-color-on-surface);">IJRESM — Jan 2026</div>
-        <div style="font:var(--md-sys-typescale-body-small);color:var(--md-sys-color-primary);margin-top:4px;">Smart Egg Incubation System</div>
+        <div class="md3-card-label">Education</div>
+        <div class="md3-card-value">B.Tech, Electronics and Telecom</div>
+        <div class="md3-card-sub">MGM's CoE, Nanded · 2022 to 2026</div>
       </div>
       <div class="md3-card">
-        <div style="font:var(--md-sys-typescale-body-small);color:var(--md-sys-color-on-surface-variant);margin-bottom:4px;">Based In</div>
-        <div style="font:500 16px/24px 'Roboto',sans-serif;color:var(--md-sys-color-on-surface);">Pune / Nanded, India</div>
-        <div style="font:var(--md-sys-typescale-body-small);color:var(--md-sys-color-primary);margin-top:4px;">Open to relocation · Graduating Nov 2026</div>
+      <a href="https://journal.ijresm.com/index.php/ijresm/article/view/3402" target="_blank" class="md3-card" style="display:block;">
+        <div class="md3-card-label">Published Research</div>
+        <div class="md3-card-value">IJRESM, Jan 2026</div>
+        <div class="md3-card-sub">Smart Egg Incubation System</div>
       </div>
-    </div>
-  </div>
-</div>
-
-<div class="divider"></div>
-
-<!-- SKILLS -->
-<div class="skills-bg" id="skills">
-  <div class="section-wrap">
-    <div class="section-eyebrow reveal">
-      <span class="material-icons-round" style="font-size:18px">bolt</span>
-      Skills
-    </div>
-    <h2 class="section-title reveal">What I Know</h2>
-    <div class="skill-grid">
-
-      <div class="skill-card reveal">
-        <div class="skill-card-title">
-          <span class="material-icons-round" style="font-size:20px">developer_board</span>
-          Firmware &amp; Embedded
-        </div>
-        <div class="chip-row">
-          <span class="chip">Embedded C</span>
-          <span class="chip">FreeRTOS</span>
-          <span class="chip">ESP32</span>
-          <span class="chip">ESP8266</span>
-          <span class="chip">Arduino</span>
-          <span class="chip">JTAG Debug</span>
-        </div>
-      </div>
-
-      <div class="skill-card reveal">
-        <div class="skill-card-title">
-          <span class="material-icons-round" style="font-size:20px">compare_arrows</span>
-          Communication Protocols
-        </div>
-        <div class="chip-row">
-          <span class="chip">SPI</span>
-          <span class="chip">I2C</span>
-          <span class="chip">UART</span>
-          <span class="chip">CAN</span>
-          <span class="chip">BLYNK IoT</span>
-          <span class="chip">JSON</span>
-        </div>
-      </div>
-
-      <div class="skill-card reveal">
-        <div class="skill-card-title">
-          <span class="material-icons-round" style="font-size:20px">memory</span>
-          Digital Design (HDL)
-        </div>
-        <div class="chip-row">
-          <span class="chip">VHDL</span>
-          <span class="chip">FPGA</span>
-          <span class="chip">Xilinx Vivado</span>
-          <span class="chip">RTL Design</span>
-          <span class="chip">Testbench</span>
-        </div>
-      </div>
-
-      <div class="skill-card reveal">
-        <div class="skill-card-title">
-          <span class="material-icons-round" style="font-size:20px">precision_manufacturing</span>
-          Robotics
-        </div>
-        <div class="chip-row">
-          <span class="chip">ROS2</span>
-          <span class="chip">Gazebo</span>
-          <span class="chip">Sensor Fusion</span>
-          <span class="chip">Wokwi</span>
-        </div>
-      </div>
-
-      <div class="skill-card reveal">
-        <div class="skill-card-title">
-          <span class="material-icons-round" style="font-size:20px">terminal</span>
-          Programming
-        </div>
-        <div class="chip-row">
-          <span class="chip">Python</span>
-          <span class="chip">C</span>
-          <span class="chip">OpenCV</span>
-          <span class="chip">Git</span>
-          <span class="chip">Linux</span>
-          <span class="chip">HTML/CSS</span>
-          <span class="chip">JavaScript</span>
-        </div>
-      </div>
-
-      <div class="skill-card reveal">
-        <div class="skill-card-title">
-          <span class="material-icons-round" style="font-size:20px">build</span>
-          Hardware Tools
-        </div>
-        <div class="chip-row">
-          <span class="chip">Logic Analyzer</span>
-          <span class="chip">Oscilloscope</span>
-          <span class="chip">PCB Design</span>
-          <span class="chip">DHT22</span>
-          <span class="chip">BME280</span>
-          <span class="chip">PIR Sensor</span>
-        </div>
-      </div>
-
+        <div class="md3-card-sub">Smart Egg Incubation System ↗</div>
+      </a>
     </div>
   </div>
 </div>
@@ -738,13 +432,16 @@ footer span { color: var(--md-sys-color-primary); }
     <!-- Featured -->
     <div class="project-card featured reveal">
       <div class="project-badge">
+      <a href="https://journal.ijresm.com/index.php/ijresm/article/view/3402" target="_blank" class="project-badge">
         <span class="material-icons-round" style="font-size:14px">article</span>
-        IJRESM — Published Jan 2026
+        IJRESM Published Jan 2026
       </div>
+        IJRESM Published Jan 2026 ↗
+      </a>
       <div class="project-title">Smart Egg Incubation System</div>
       <p class="project-desc">
-        IoT incubation system maintaining temperature at 37°C and humidity at 85% — the exact conditions eggs need.
-        ESP8266 + DHT22 reads sensors continuously. Fan, UV light, and mist humidifier activate automatically.
+        IoT incubation system maintaining temperature at 37°C and humidity at 85%, the exact conditions eggs need.
+        ESP8266 with DHT22 reads sensors continuously. Fan, UV light, and mist humidifier activate automatically.
         Monitored live on any phone via Blynk. Published in IJRESM, co-authored with the team at MGM.
       </p>
       <div class="project-chips">
@@ -758,10 +455,29 @@ footer span { color: var(--md-sys-color-primary); }
     </div>
 
     <div class="project-card reveal">
+      <div class="project-title">Custom Embedded Driver</div>
+      <p class="project-desc">
+        Low-level peripheral drivers written from scratch in C and Rust for SPI, I2C, UART, and CAN.
+        No HAL abstractions, no bloat. Tight, portable code debugged at signal level with JTAG and a logic analyzer.
+        Rust used for memory-safe driver modules where correctness is critical.
+      </p>
+      <div class="project-chips">
+        <span class="project-chip">C</span>
+        <span class="project-chip">Rust</span>
+        <span class="project-chip">SPI</span>
+        <span class="project-chip">I2C</span>
+        <span class="project-chip">UART</span>
+        <span class="project-chip">CAN</span>
+        <span class="project-chip">JTAG</span>
+        <span class="project-chip">FreeRTOS</span>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
       <div class="project-title">ADAS Prototype Car</div>
       <p class="project-desc">
         Real-time obstacle detection with autonomous braking and controlled deceleration.
-        Sensor data feeds directly into embedded decision logic — no human input for collision avoidance.
+        Sensor data feeds directly into embedded decision logic, no human input for collision avoidance.
         Response time kept tight, false trigger rate minimized through threshold tuning.
       </p>
       <div class="project-chips">
@@ -770,21 +486,6 @@ footer span { color: var(--md-sys-color-primary); }
         <span class="project-chip">RTOS</span>
         <span class="project-chip">C</span>
         <span class="project-chip">Motor Control</span>
-      </div>
-    </div>
-
-    <div class="project-card reveal">
-      <div class="project-title">Door Alert with Face Recognition</div>
-      <p class="project-desc">
-        Camera scans faces against a stored database. Known faces unlock; unknown faces trigger an alert instantly.
-        Built with Python and OpenCV on microcontroller. Real-time decision making with no cloud dependency.
-      </p>
-      <div class="project-chips">
-        <span class="project-chip">Python</span>
-        <span class="project-chip">OpenCV</span>
-        <span class="project-chip">ESP32</span>
-        <span class="project-chip">RTOS</span>
-        <span class="project-chip">GPIO</span>
       </div>
     </div>
 
@@ -803,14 +504,14 @@ footer span { color: var(--md-sys-color-primary); }
   <div class="exp-list">
 
     <div class="exp-card reveal">
-      <div class="exp-date">Feb 2026 – Aug 2026<br>Remote</div>
+      <div class="exp-date">Feb 2026 to Aug 2026<br>Remote</div>
       <div>
         <div class="exp-role">Frontend Developer</div>
         <div class="exp-company">The Herb's Magic · Internship · theherbsmagic.com</div>
         <p class="exp-desc">
           Designed and developed frontend pages for theherbsmagic.com using HTML, CSS, and JavaScript.
-          Improved UI readability, responsiveness, and overall user experience across the site.
-          Collaborated on implementing a custom Obsidian-style theme and interface components.
+          Improved UI readability, responsiveness, and user experience across the site.
+          Implemented a custom Obsidian-style theme and various interface components.
         </p>
       </div>
     </div>
@@ -829,14 +530,14 @@ footer span { color: var(--md-sys-color-primary); }
     </div>
 
     <div class="exp-card reveal">
-      <div class="exp-date">2022 – 2026<br>Nanded, MH</div>
+      <div class="exp-date">2022 to 2026<br>Nanded, MH</div>
       <div>
-        <div class="exp-role">B.Tech — Electronics &amp; Telecommunication</div>
-        <div class="exp-company">MGM's College of Engineering &amp; Technology</div>
+        <div class="exp-role">B.Tech, Electronics and Telecommunication</div>
+        <div class="exp-company">MGM's College of Engineering and Technology</div>
         <p class="exp-desc">
           Core coursework in embedded systems, digital electronics, communication protocols,
-          FPGA design, and signal processing. Built hardware projects across firmware, VHDL, IoT, and robotics.
-          Co-authored and published research paper in IJRESM (Jan 2026).
+          FPGA design, and signal processing. Built hardware projects across firmware, VHDL, and IoT.
+          Co-authored and published research paper in IJRESM, Jan 2026.
         </p>
       </div>
     </div>
@@ -857,8 +558,7 @@ footer span { color: var(--md-sys-color-primary); }
         </div>
         <h2 class="section-title">Let's Work Together</h2>
         <p class="contact-desc">
-          Open to embedded firmware, robotics, and frontend development roles.
-          Final year, graduating Nov 2026. Based in Pune / Nanded, open to relocation.
+          Open to embedded firmware, frontend development, and system-level roles.
         </p>
         <a href="mailto:omkarshirse@gmail.com" class="btn-filled">
           <span class="material-icons-round" style="font-size:18px">send</span>
@@ -870,13 +570,13 @@ footer span { color: var(--md-sys-color-primary); }
           <span class="material-icons-round">code</span>
           github.com/OmShirse
         </a>
-        <a href="https://linkedin.com/in/omkar-shirse-6520b1259" target="_blank" class="contact-link">
+        <a href="https://linkedin.com/in/omkarshirse" target="_blank" class="contact-link">
           <span class="material-icons-round">link</span>
-          linkedin.com/in/omkar-shirse-6520b1259
+          linkedin.com/in/omkarshirse
         </a>
         <a href="https://journal.ijresm.com/index.php/ijresm/article/view/3402" target="_blank" class="contact-link">
           <span class="material-icons-round">article</span>
-          IJRESM — Smart Egg Incubation
+          IJRESM Publication, Smart Egg Incubation
         </a>
       </div>
     </div>
@@ -885,12 +585,11 @@ footer span { color: var(--md-sys-color-primary); }
 
 <!-- FOOTER -->
 <footer>
-  <p>© 2026 <span>Omkar Shirse</span> — Built with Material Design 3</p>
-  <p>Pune, India <span>·</span> ECE '26</p>
+  <p>2026 <span>Omkar Shirse</span>, Built with Material Design 3</p>
+  <p>Pune, India <span>·</span> ECE 2026</p>
 </footer>
 
 <script>
-  // Scroll reveal
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry, i) => {
       if (entry.isIntersecting) {
@@ -901,18 +600,15 @@ footer span { color: var(--md-sys-color-primary); }
   }, { threshold: 0.08 });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-  // Nav active state
   const sections = document.querySelectorAll('[id]');
   const navLinks = document.querySelectorAll('.nav-links a');
   window.addEventListener('scroll', () => {
     let current = '';
-    sections.forEach(s => {
-      if (window.scrollY >= s.offsetTop - 80) current = s.id;
-    });
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
     navLinks.forEach(a => {
       const active = a.getAttribute('href') === '#' + current;
       a.style.background = active ? 'rgba(248,188,76,0.12)' : '';
-      a.style.color = active ? 'var(--md-sys-color-primary)' : '';
+      a.style.color = active ? 'var(--md-primary)' : '';
     });
   });
 </script>
