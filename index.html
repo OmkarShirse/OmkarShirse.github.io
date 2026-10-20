@@ -161,24 +161,34 @@
     text-align: center;
   }
 
-  /* The User's Name Prominently Displayed Above the Quote */
-  .hero-creator-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.8rem;
+  /* The User's Name Prominently Displayed Above the Quote (Same Style as Quote) */
+  .hero-creator-kicker {
     font-family: var(--font-mono);
-    font-size: 0.82rem;
+    font-size: 0.74rem;
     font-weight: 600;
-    letter-spacing: 0.25em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--sun-amber);
-    margin-bottom: 2rem;
+    margin-bottom: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
   }
-  .hero-creator-badge::before, .hero-creator-badge::after {
+  .hero-creator-kicker::before, .hero-creator-kicker::after {
     content: '';
-    width: 32px;
+    width: 28px;
     height: 1px;
     background: var(--sun-amber);
+  }
+
+  .hero-creator-name {
+    font-family: var(--font-serif);
+    font-size: clamp(2.5rem, 5.5vw, 4.2rem);
+    font-weight: 400;
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+    color: var(--ink-primary);
+    margin-bottom: 1.8rem;
   }
 
   /* The Signature Quote */
@@ -698,8 +708,9 @@
   <!-- HERO SECTION: NAME ABOVE QUOTE                                             -->
   <!-- ========================================================================= -->
   <section class="hero-block">
-    <!-- User's Name Prominently Positioned Above the Quote -->
-    <div class="hero-creator-badge">Omkar Shirse</div>
+    <!-- User's Name Prominently Positioned Above the Quote (Same Fraunces Serif Style) -->
+    <div class="hero-creator-kicker">Embedded Developer &middot; Silicon Systems</div>
+    <div class="hero-creator-name">Omkar Shirse</div>
 
     <!-- The Philosophical Headline / Quote -->
     <h1 class="hero-quote-headline">
