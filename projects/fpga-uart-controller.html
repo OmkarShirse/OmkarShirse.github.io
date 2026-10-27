@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>FPGA Full-Duplex UART Core in VHDL — Omkar Shirse</title>
+<title>FPGA Full-Duplex UART Core in VHDL-2008 — Omkar Shirse</title>
 
 <!-- TYPOGRAPHY: Fraunces (Warm Editorial Serif) + Plus Jakarta Sans + JetBrains Mono -->
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -260,6 +260,8 @@
   .fn { color: #60a5fa; }
   .type { color: #fbbf24; }
   .cm { color: #857e74; font-style: italic; }
+  .num { color: #34d399; }
+  .str { color: #a78bfa; }
 
   .note-card {
     background: var(--bg-card);
@@ -279,6 +281,30 @@
     font-size: 0.88rem;
     color: var(--ink-secondary);
     line-height: 1.75;
+  }
+
+  .image-card-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-paper);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    box-shadow: var(--shadow-soft);
+  }
+  .image-card-box img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    border: 1px solid var(--border-paper);
+    display: block;
+    background: #111;
+  }
+  .image-card-caption {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--ink-muted);
+    margin-top: 0.8rem;
+    text-align: center;
   }
 
   footer.page-footer {
@@ -312,13 +338,14 @@
 
   <div class="meta-tag-cluster">
     <span class="badge-tag">PROJECT_04</span>
-    <span class="badge-tag">Silicon RTL Design &middot; VHDL</span>
-    <span class="badge-tag">Xilinx Vivado &middot; GHDL Verified</span>
+    <span class="badge-tag">Silicon RTL Design &middot; VHDL-2008</span>
+    <span class="badge-tag">GHDL &amp; GTKWave Verified</span>
+    <span class="badge-tag">MIT Licensed</span>
   </div>
 
-  <h1 class="project-title">Full-Duplex UART Core in VHDL</h1>
+  <h1 class="project-title">Full-Duplex UART Core in VHDL-2008</h1>
   <p class="project-subtitle">
-    Synthesizable 8-N-1 serial transceiver designed from digital primitives with parameterized baud generation, 16x oversampling receiver state machines, and loopback testbench verification.
+    Synthesizable 8-N-1 serial transceiver designed from digital primitives with 2-stage metastability synchronization, mid-bit glitch rejection, double-buffered reception, zero-lag TX assertion, and automated self-checking loopback testbenches.
   </p>
 
   <!-- TELEMETRY BANNER -->
@@ -326,80 +353,131 @@
     <div class="telemetry-col">
       <h5>Framing Standard</h5>
       <div class="val">8-N-1</div>
-      <p>1 Start, 8 Data, 1 Stop</p>
+      <p>1 Start, 8 Data (LSB First), 1 Stop</p>
     </div>
     <div class="telemetry-col">
-      <h5>Oversampling</h5>
-      <div class="val">16x Center</div>
-      <p>Majority voting filter</p>
+      <h5>Metastability Sync</h5>
+      <div class="val">2-Stage FF</div>
+      <p>Hardened against asynchronous metastability</p>
     </div>
     <div class="telemetry-col">
-      <h5>Timing Generic</h5>
+      <h5>Timing Formula</h5>
       <div class="val">g_CLKS_PER_BIT</div>
-      <p>Parameterized clock divider</p>
+      <p>Integer-rounded half-baud division</p>
     </div>
     <div class="telemetry-col">
-      <h5>Silicon Footprint</h5>
-      <div class="val">&lt; 85 Slices</div>
-      <p>Synthesized on Artix-7</p>
+      <h5>Verification</h5>
+      <div class="val">Self-Checking</div>
+      <p>Automated assertions &amp; zero-idle streaming</p>
     </div>
   </div>
 
-  <!-- SECTION 1: ARCHITECTURAL OVERVIEW -->
+  <!-- SECTION 1: SILICON SERIAL COMMUNICATION FUNDAMENTALS -->
   <section class="content-section">
     <h2 class="section-h2">01 / Silicon Serial Communication Fundamentals</h2>
     <p class="lead-text">
-      While microcontrollers hide serial communication behind fixed hardware registers, implementing a UART on an FPGA requires building the underlying shift registers, bit-period timers, and asynchronous edge detectors directly in synthesizable RTL.
+      While microcontrollers hide serial communication behind fixed hardware registers, implementing a UART on an FPGA requires building the underlying shift registers, bit-period counters, edge synchronizers, and glitch filters directly in synthesizable RTL.
     </p>
     <p class="body-text">
-      The core converts parallel 8-bit bus bytes into a deterministic serial bitstream over a single physical trace and reconstructs incoming asynchronous serial streams without data loss.
+      The standard <strong>8-N-1 UART protocol</strong> transmits parallel byte data across a single asynchronous physical line:
+    </p>
+    <ul style="margin: 0 0 1.5rem 1.5rem; font-size:0.92rem; color:var(--ink-secondary); line-height:1.8;">
+      <li><strong>Idle Line:</strong> Held stably high (logic <code>'1'</code>) when no traffic is present.</li>
+      <li><strong>Start Bit:</strong> Driven low (logic <code>'0'</code>) for exactly 1 bit-period to signal the beginning of a frame.</li>
+      <li><strong>Data Bits:</strong> 8 bits serialized least-significant bit (LSB) first.</li>
+      <li><strong>Stop Bit:</strong> Driven high (logic <code>'1'</code>) for 1 bit-period to demarcate the frame boundary and reset line bias.</li>
+    </ul>
+    <p class="body-text">
+      Because incoming serial data originates from an external, unsynchronized clock domain, directly feeding the RX pin into sequential logic causes <strong>metastability</strong>—inducing indeterminate logic levels and corrupting state transitions. Robust silicon engineering requires double-register synchronization and mid-period verification.
     </p>
   </section>
 
-  <!-- SECTION 2: RECEIVER OVERSAMPLING STATE MACHINE -->
+  <!-- SECTION 2: HARDWARE ARCHITECTURE & STATE MACHINES -->
   <section class="content-section">
-    <h2 class="section-h2">02 / Receiver 16x Oversampling Architecture</h2>
+    <h2 class="section-h2">02 / RTL Architecture &amp; State Machine Design</h2>
     <p class="body-text">
-      Because the incoming serial stream is completely asynchronous to the local FPGA clock oscillator, the receiver cannot simply sample the input line at nominal bit intervals. 
-      The core implements a <strong>16x oversampling state machine</strong>:
+      The architecture partitions cleanly into two independent synthesizable modules: the transmitter (<code>uart_tx</code> in <code>UART.vhd</code>) and the receiver (<code>uart_rx</code> in <code>UART_TB.vhd</code>), coordinated via parameterized generic timers:
     </p>
 
     <div class="diagram-box">
-Clock (e.g. 50 MHz) ──► [Baud Rate Clock Divider] ──► 16x Baud Ticks
-                                                               │
-     +─────────────────────────────────────────────────────────+
-     │
-     ▼
-[RX Pin] ──► [2-Stage Flip-Flop Synchronizer] ──► [Falling Edge Start-Bit Detector]
-                                                               │
-                                                               ▼
-                                               +───────────────────────────────+
-                                               | RX State Machine:             |
-                                               | &bull; Count 8 ticks to center    |
-                                               | &bull; Sample bits at ticks 7,8,9  |
-                                               | &bull; 3-sample majority voting   |
-                                               | &bull; Shift into 8-bit register  |
-                                               | &bull; Verify stop bit asserted   |
-                                               | &bull; Raise o_rx_dv valid flag   |
-                                               +───────────────────────────────+</div>
+========================================================================================
+                                 TRANSMITTER (uart_tx)
+========================================================================================
+   i_tx_start (pulse)  ──┐
+   i_tx_data [7:0]     ──┤──► [ST_IDLE]
+                         │       │ (i_tx_start = '1' -> Latch data, assert busy, drive '0')
+                         │       ▼
+                         │    [ST_START_BIT]  --> Drives '0' for g_CLKS_PER_BIT cycles
+                         │       │
+                         │       ▼
+                         │    [ST_DATA_BITS]  --> Transmits bit 0..7 (LSB first)
+                         │       │
+                         │       ▼
+                         │    [ST_STOP_BIT]   --> Drives '1', de-asserts busy upon completion
+                         ▼       │
+                    o_tx_serial  └──► Returns to [ST_IDLE]
+
+========================================================================================
+                                  RECEIVER (uart_rx)
+========================================================================================
+   i_rx_serial (Async) ──► [FF Stage 1] ──► [FF Stage 2] ──► [Falling Edge Detector]
+                                                                     │
+                                                                     ▼
+                                                                [ST_IDLE]
+                                                                     │ (Falling edge detected)
+                                                                     ▼
+                                                            [ST_START_BIT]
+                                                                     │ Mid-bit check (g_CLKS/2 - 1)
+                                                                     ├── Line = '0' --> Valid Start!
+                                                                     └── Line = '1' --> Glitch! Abort to IDLE
+                                                                     │
+                                                                     ▼
+                                                            [ST_DATA_BITS]
+                                                                     │ Sample at center of each bit
+                                                                     ▼
+                                                            [ST_STOP_BIT]
+                                                                     │ Verify line = '1' (Stop bit)
+                                                                     ├── Valid: Latch byte into o_rx_data,
+                                                                     │          Pulse o_rx_data_valid <= '1'
+                                                                     └── Framing error: Drop corrupt byte</div>
+
+    <div class="note-card">
+      <h4>Silicon Fix: Zero-Latency Start Bit Assertion</h4>
+      <p>
+        In naive UART state machines, asserting <code>i_tx_start</code> moves the FSM to <code>ST_START_BIT</code> on clock tick $N$, but only begins driving the physical line low on tick $N+1$. 
+        In this hardened implementation, <code>r_tx_serial &lt;= '0'</code> and <code>r_tx_busy &lt;= '1'</code> are asserted <strong>immediately within the ST_IDLE branch</strong> when <code>i_tx_start = '1'</code>, eliminating startup jitter and achieving immediate cycle-accurate transmission.
+      </p>
+    </div>
   </section>
 
-  <!-- SECTION 3: TIMING GENERICS & MATH -->
+  <!-- SECTION 3: PARAMETERIZED TIMING & INTEGER ROUNDING -->
   <section class="content-section">
-    <h2 class="section-h2">03 / Parameterized Clock Divider Timing</h2>
+    <h2 class="section-h2">03 / Parameterized Timing &amp; Integer Rounding</h2>
     <p class="body-text">
-      The timing of the entire core is parameterized via a single VHDL generic:
+      The baud rate generation is fully parameterized via a single compile-time generic, <code>g_CLKS_PER_BIT</code>. To avoid accumulative phase drift across asynchronous clock ratios, the clock division calculation employs <strong>half-baud integer rounding</strong>:
     </p>
-    <div style="background:var(--bg-card); border:1px solid var(--border-paper); padding:1.5rem; border-radius:12px; margin: 1.5rem 0; font-family:var(--font-mono); font-size:0.9rem;">
-      g_CLKS_PER_BIT = (System Clock Frequency) / (Target Baud Rate)
+
+    <div style="background:var(--bg-card); border:1px solid var(--border-paper); padding:1.5rem; border-radius:12px; margin: 1.5rem 0; font-family:var(--font-mono); font-size:0.95rem;">
+      g_CLKS_PER_BIT = (c_CLK_FREQUENCY + c_BAUD_RATE / 2) / c_BAUD_RATE
     </div>
+
+    <p class="body-text">
+      Adding <code>c_BAUD_RATE / 2</code> implements round-to-nearest integer arithmetic instead of truncating division. Both modules enforce generic parameter bounds at synthesis time:
+    </p>
+
+    <div class="code-block">
+<span class="cm">-- Enforces minimum clock oversampling margin for stable sampling</span>
+<span class="kw">assert</span> g_CLKS_PER_BIT &gt;= <span class="num">4</span> <span class="kw">report</span> <span class="str">"g_CLKS_PER_BIT must be at least 4"</span> <span class="kw">severity</span> <span class="kw">failure</span>;
+    </div>
+
     <table class="data-table">
       <thead>
         <tr>
-          <th>System Clock</th>
-          <th>Baud Rate</th>
+          <th>System Clock (`c_CLK_FREQUENCY`)</th>
+          <th>Target Baud Rate</th>
           <th>Calculated `g_CLKS_PER_BIT`</th>
-          <th>Baud Error Rate</th>
+          <th>Mid-Bit Sample Point</th>
+          <th>Baud Error Margin</th>
         </tr>
       </thead>
       <tbody>
@@ -407,61 +485,176 @@ Clock (e.g. 50 MHz) ──► [Baud Rate Clock Divider] ──► 16x Baud Ticks
           <td>50.000 MHz</td>
           <td>9,600 baud</td>
           <td>5,208 clock cycles</td>
-          <td>&lt; 0.01% (Exact match)</td>
+          <td>Cycle 2,603</td>
+          <td>&lt; 0.008% (Exact)</td>
         </tr>
         <tr>
           <td>50.000 MHz</td>
           <td>115,200 baud</td>
           <td>434 clock cycles</td>
-          <td>&lt; 0.08% (Well within &plusmn;2% UART tolerance)</td>
+          <td>Cycle 216</td>
+          <td>&lt; 0.076% (&plusmn;2% RS-232 limit)</td>
         </tr>
         <tr>
           <td>100.000 MHz</td>
           <td>115,200 baud</td>
           <td>868 clock cycles</td>
-          <td>&lt; 0.04%</td>
+          <td>Cycle 433</td>
+          <td>&lt; 0.038%</td>
         </tr>
       </tbody>
     </table>
   </section>
 
-  <!-- SECTION 4: CODE HIGHLIGHT: VHDL ARCHITECTURE -->
+  <!-- SECTION 4: CODE HIGHLIGHT: HARDENED VHDL RTL -->
   <section class="content-section">
     <h2 class="section-h2">04 / Synthesizable VHDL Core Implementation</h2>
+    <p class="body-text">
+      The RTL is written cleanly to IEEE-1164 standards, ensuring portability across Xilinx Vivado, Intel Quartus, Lattice Diamond, and open-source toolchains (GHDL, Yosys):
+    </p>
+
     <div class="code-block">
+<span class="cm">-- UART.vhd: Parameterized Synthesizable Transmitter</span>
+<span class="kw">library</span> ieee;
+<span class="kw">use</span> ieee.std_logic_1164.<span class="kw">all</span>;
+
 <span class="kw">entity</span> <span class="fn">uart_tx</span> <span class="kw">is</span>
-  <span class="kw">generic</span> (
-    g_CLKS_PER_BIT : <span class="type">integer</span> := <span class="num">868</span>  <span class="cm">-- 100 MHz clock / 115200 baud</span>
-  );
-  <span class="kw">port</span> (
-    i_clk       : <span class="kw">in</span>  <span class="type">std_logic</span>;
-    i_tx_dv     : <span class="kw">in</span>  <span class="type">std_logic</span>;
-    i_tx_byte   : <span class="kw">in</span>  <span class="type">std_logic_vector</span>(<span class="num">7</span> <span class="kw">downto</span> <span class="num">0</span>);
-    o_tx_active : <span class="kw">out</span> <span class="type">std_logic</span>;
-    o_tx_serial : <span class="kw">out</span> <span class="type">std_logic</span>;
-    o_tx_done   : <span class="kw">out</span> <span class="type">std_logic</span>
-  );
-<span class="kw">end</span> <span class="fn">uart_tx</span>;
+    <span class="kw">generic</span> (
+        g_CLKS_PER_BIT : <span class="type">integer</span> := <span class="num">5208</span>  <span class="cm">-- 50 MHz Clock / 9600 Baud</span>
+    );
+    <span class="kw">port</span> (
+        i_clk       : <span class="kw">in</span>  <span class="type">std_logic</span>;
+        i_rst       : <span class="kw">in</span>  <span class="type">std_logic</span>;
+        i_tx_start  : <span class="kw">in</span>  <span class="type">std_logic</span>;                    <span class="cm">-- Pulse to initiate transmission</span>
+        i_tx_data   : <span class="kw">in</span>  <span class="type">std_logic_vector</span>(<span class="num">7</span> <span class="kw">downto</span> <span class="num">0</span>); <span class="cm">-- Parallel byte</span>
+        o_tx_serial : <span class="kw">out</span> <span class="type">std_logic</span>;                    <span class="cm">-- Serial bitstream out</span>
+        o_tx_busy   : <span class="kw">out</span> <span class="type">std_logic</span>                     <span class="cm">-- High while frame active</span>
+    );
+<span class="kw">end entity</span> <span class="fn">uart_tx</span>;
     </div>
 
-    <div class="note-card">
-      <h4>Self-Contained Verification: `UART_TB.vhd` &amp; GHDL</h4>
-      <p>
-        The repository includes an automated loopback testbench connecting the transmitter serial output directly to the receiver input. 
-        It sequentially transmits test patterns <code>0xA5</code> (10100101) and <code>0x3C</code> (00111100), asserting frame completion flags and verifying identical byte reconstruction. 
-        Packaged with a one-click simulation script <code>run_sim.sh</code> for GHDL and GTKWave.
-      </p>
+    <p class="body-text">
+      In the receiver, double-buffering ensures that downstream systems never read partial or unstable data during active shift reception:
+    </p>
+
+    <div class="code-block">
+<span class="cm">-- UART_TB.vhd (uart_rx): Double-buffered stop bit validation</span>
+<span class="kw">when</span> ST_STOP_BIT =&gt;
+    <span class="kw">if</span> r_clk_counter &lt; g_CLKS_PER_BIT - <span class="num">1</span> <span class="kw">then</span>
+        r_clk_counter &lt;= r_clk_counter + <span class="num">1</span>;
+    <span class="kw">else</span>
+        r_clk_counter &lt;= <span class="num">0</span>;
+        <span class="cm">-- Verify line is high (valid stop bit); latch byte only on valid frame</span>
+        <span class="kw">if</span> r_rx_sync_2 = <span class="str">'1'</span> <span class="kw">then</span>
+            r_rx_data    &lt;= r_rx_byte; <span class="cm">-- Update public output register</span>
+            r_rx_d_valid &lt;= <span class="str">'1'</span>;       <span class="cm">-- Single-cycle completion pulse</span>
+        <span class="kw">end if</span>;
+        r_rx_state &lt;= ST_IDLE;
+    <span class="kw">end if</span>;
     </div>
   </section>
 
-  <!-- SECTION 5: ROADMAP -->
+  <!-- SECTION 5: AUTOMATED TEST SUITE & COVERAGE -->
   <section class="content-section">
-    <h2 class="section-h2">05 / Hardware Roadmap &amp; Scope</h2>
-    <ul style="margin: 0 0 1.5rem 1.5rem; font-size:0.92rem; color:var(--ink-secondary); line-height:1.8;">
-      <li><strong>Hardware Parity Generation:</strong> Adding configurable even/odd parity bit insertion and parity error flags.</li>
-      <li><strong>Synchronous Dual-Clock FIFO Buffers:</strong> Decoupling the peripheral bus clock domain from serial burst arrival.</li>
-      <li><strong>Baud Auto-Detection:</strong> Measuring the pulse width of standard ASCII carriage returns to calibrate <code>g_CLKS_PER_BIT</code> dynamically.</li>
-    </ul>
+    <h2 class="section-h2">05 / Automated Self-Checking Verification Suite</h2>
+    <p class="body-text">
+      The verification harness <code>tb_uart</code> instantiates the transmitter and receiver in a closed loopback topology. Rather than relying on manual visual waveform inspection, it executes an automated assertion procedure with strict timeouts:
+    </p>
+
+    <div class="code-block">
+<span class="cm">-- Modular verification procedure with assertion timeouts</span>
+<span class="kw">procedure</span> <span class="fn">check_send</span>(<span class="kw">constant</span> c_data : <span class="kw">in</span> <span class="type">std_logic_vector</span>(<span class="num">7</span> <span class="kw">downto</span> <span class="num">0</span>)) <span class="kw">is</span>
+<span class="kw">begin</span>
+    w_tx_data  &lt;= c_data;
+    w_tx_start &lt;= <span class="str">'1'</span>;
+    <span class="kw">wait for</span> c_CLK_PERIOD;
+    w_tx_start &lt;= <span class="str">'0'</span>;
+
+    <span class="cm">-- Wait for receiver data valid pulse with 2 ms guard timeout</span>
+    <span class="kw">wait until</span> rising_edge(w_clk) <span class="kw">and</span> w_rx_data_valid = <span class="str">'1'</span> <span class="kw">for</span> <span class="num">2</span> ms;
+    <span class="kw">assert</span> w_rx_data_valid = <span class="str">'1'</span> <span class="kw">report</span> <span class="str">"TESTBENCH ERROR: Timed out waiting for rx_data_valid"</span> <span class="kw">severity failure</span>;
+    <span class="kw">assert</span> w_rx_data = c_data   <span class="kw">report</span> <span class="str">"TESTBENCH ERROR: Received data mismatch"</span>            <span class="kw">severity failure</span>;
+
+    <span class="cm">-- Wait until transmitter finishes</span>
+    <span class="kw">wait until</span> w_tx_busy = <span class="str">'0'</span> <span class="kw">for</span> <span class="num">2</span> ms;
+    <span class="kw">assert</span> w_tx_busy = <span class="str">'0'</span>       <span class="kw">report</span> <span class="str">"TESTBENCH ERROR: TX busy timeout"</span>                   <span class="kw">severity failure</span>;
+    <span class="kw">wait for</span> <span class="num">1</span> us;
+<span class="kw">end procedure</span>;
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Test Case</th>
+          <th>Bit Pattern / Scenario</th>
+          <th>Verification Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Test 1: `0xA5`</td>
+          <td>`10100101`</td>
+          <td>Validates maximum alternating bit transition density &amp; timing integrity.</td>
+        </tr>
+        <tr>
+          <td>Test 2: `0x3C`</td>
+          <td>`00111100`</td>
+          <td>Validates nibble boundaries and multi-cycle static signal states.</td>
+        </tr>
+        <tr>
+          <td>Test 3: `0x00`</td>
+          <td>`00000000`</td>
+          <td>Boundary test: confirms start bit isn't confused with 8 consecutive data zeros.</td>
+        </tr>
+        <tr>
+          <td>Test 4: `0xFF`</td>
+          <td>`11111111`</td>
+          <td>Boundary test: confirms idle line isn't confused with all-ones payload.</td>
+        </tr>
+        <tr>
+          <td>Test 5: Back-to-Back</td>
+          <td>`0x55` immediately followed by `0xAA`</td>
+          <td>Stress test: verifies zero inter-frame gap handling without stop-bit clipping.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SECTION 6: WAVEFORM ANALYSIS & GHDL SIMULATION SCRIPT -->
+  <section class="content-section">
+    <h2 class="section-h2">06 / Simulation Waveforms &amp; Automated Pipeline</h2>
+    <p class="body-text">
+      The design is verified via GHDL and visualized in GTKWave. Below is the captured simulation waveform showing loopback serial framing, bit sampling, and immediate bus latching:
+    </p>
+
+    <div class="image-card-box">
+      <img src="../assets/uart_output.png" alt="GTKWave UART Simulation Waveform Output" />
+      <div class="image-card-caption">
+        GTKWave Waveform: Loopback verification showing 50 MHz system clock, transmitter state transitions, serialized bitstream, and receiver single-cycle data valid pulses.
+      </div>
+    </div>
+
+    <p class="body-text">
+      The repository includes a turnkey script, <code>run_sim.sh</code>, that automates compilation, elaboration, and waveform dumping using standard IEEE libraries:
+    </p>
+
+    <div class="code-block">
+<span class="cm">#!/usr/bin/env bash</span>
+<span class="kw">set</span> -euo pipefail
+<span class="kw">cd</span> <span class="str">"$(dirname "$0")"</span>
+
+<span class="cm"># 1. Analyze VHDL-2008 sources with standard IEEE libraries</span>
+ghdl -a --std=08 --ieee=standard UART.vhd
+ghdl -a --std=08 --ieee=standard UART_TB.vhd
+
+<span class="cm"># 2. Elaborate testbench entity</span>
+ghdl -e --std=08 --ieee=standard tb_uart
+
+<span class="cm"># 3. Execute simulation and dump VCD waveform for GTKWave</span>
+ghdl -r --std=08 --ieee=standard tb_uart \
+    --vcd=uart_waveform.vcd \
+    --stop-time=10ms
+    </div>
   </section>
 
 </main>

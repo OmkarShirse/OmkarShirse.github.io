@@ -938,15 +938,15 @@
             <div class="card-screen-inner">
               <div class="screen-meta-top">
                 <span class="screen-index">SYSTEM_04 &middot; SILICON RTL DESIGN</span>
-                <span class="screen-badge">VHDL &middot; ARTIX-7</span>
+                <span class="screen-badge">VHDL-2008 &middot; ARTIX-7</span>
               </div>
 
               <div class="card-screen-content">
                 <div class="card-screen-text">
                   <h3>FPGA Full-Duplex UART Controller</h3>
                   <p>
-                    Synthesizable 8-N-1 serial communications core designed from gate primitives in VHDL. 
-                    Implements fractional baud rate division, <strong>16x oversampling receiver state machines</strong> with center-bit majority voting across ticks 7, 8, and 9 to eliminate noise, and a 2-stage flip-flop synchronizer preventing clock domain metastability.
+                    Synthesizable 8-N-1 serial transceiver core designed from digital primitives in VHDL-2008. 
+                    Features a <strong>2-stage flip-flop synchronizer</strong> for clock domain metastability immunity, mid-bit sampling with <strong>false start-bit glitch rejection</strong>, <strong>double-buffered RX output</strong> latched only upon valid stop bit validation, and zero-latency TX start assertion. Verified via automated assertion testbenches in GHDL.
                   </p>
                   <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
                     <a href="projects/fpga-uart-controller.html" class="btn-tactile btn-tactile-dark" onclick="event.stopPropagation()">In-Depth Case Study &rarr;</a>
@@ -957,29 +957,29 @@
                 <div class="telemetry-board">
                   <div class="telemetry-row">
                     <span class="telemetry-key">Target Silicon</span>
-                    <span class="telemetry-val">Artix-7 FPGA</span>
+                    <span class="telemetry-val">Artix-7 / Cyclone</span>
                   </div>
                   <div class="telemetry-row">
                     <span class="telemetry-key">Protocol Framing</span>
-                    <span class="telemetry-val">8-N-1 UART</span>
+                    <span class="telemetry-val">8-N-1 (LSB First)</span>
                   </div>
                   <div class="telemetry-row">
-                    <span class="telemetry-key">Oversampling</span>
-                    <span class="telemetry-val">16x Majority</span>
+                    <span class="telemetry-key">RX Protection</span>
+                    <span class="telemetry-val">2-Flop Sync + Glitch</span>
                   </div>
                   <div class="telemetry-row">
-                    <span class="telemetry-key">LUT Utilization</span>
-                    <span class="telemetry-val">&lt; 85 Slices</span>
+                    <span class="telemetry-key">Test Coverage</span>
+                    <span class="telemetry-val">Automated Assertions</span>
                   </div>
                 </div>
               </div>
 
               <div class="screen-meta-bottom">
                 <div class="tech-spec-chips">
-                  <span class="tech-chip">VHDL RTL</span>
-                  <span class="tech-chip">Xilinx Vivado</span>
-                  <span class="tech-chip">2-Flop Sync</span>
-                  <span class="tech-chip">Simulation</span>
+                  <span class="tech-chip">VHDL-2008 RTL</span>
+                  <span class="tech-chip">2-Stage Sync</span>
+                  <span class="tech-chip">Double-Buffered RX</span>
+                  <span class="tech-chip">GHDL &amp; GTKWave</span>
                 </div>
                 <span style="font-family:var(--font-mono); font-size:0.75rem; color:var(--sun-amber);">Click card for deep dive &rarr;</span>
               </div>
@@ -1186,10 +1186,13 @@
     },
     uart: {
       title: "FPGA Full-Duplex UART Core",
-      sub: "Synthesizable VHDL RTL · 8-N-1 Protocol",
+      sub: "Synthesizable VHDL-2008 RTL · 8-N-1 Protocol",
       text: `
         <p style="margin-bottom:1.2rem; font-size:0.95rem; line-height:1.8; color:var(--ink-secondary);">
-          Designed from gate primitives in VHDL for Artix-7 FPGAs. Implements fractional baud rate division, 16x oversampling RX state machines with center-bit majority voting, and 2-stage synchronization registers to eliminate metastability.
+          Synthesizable 8-N-1 UART transmitter (<code>uart_tx</code>) and receiver (<code>uart_rx</code>) written in standard VHDL-2008. Parameterized via integer-rounded clock division formula <code>g_CLKS_PER_BIT = (f_clk + baud/2) / baud</code>.
+        </p>
+        <p style="margin-bottom:1.5rem; font-size:0.95rem; line-height:1.8; color:var(--ink-secondary);">
+          <strong>Silicon Hardening &amp; Verification:</strong> Features a 2-stage input flip-flop synchronizer to eliminate clock domain metastability, falling-edge start bit detection with mid-period glitch abort, simultaneous start-bit and busy asserting on transmission start, and double-buffered data output latched only upon valid stop bit verification. Fully verified via automated self-checking assertions in <code>UART_TB.vhd</code> (testing 0x00, 0xFF, and zero-idle back-to-back 0x55/0xAA frames) and reproducible GHDL simulation scripts.
         </p>
         <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
           <a href="projects/fpga-uart-controller.html" class="btn-tactile btn-tactile-dark">Read Full Case Study Page &rarr;</a>
