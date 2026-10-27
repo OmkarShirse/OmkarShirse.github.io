@@ -783,8 +783,9 @@
                     This autonomous closed-loop system holds <strong>37.5&deg;C &plusmn;0.2&deg;C</strong> and regulates dual-stage humidity (<strong>58% vs. 70% RH</strong>) over a 21-day timeline using non-blocking ESP8266 RTOS scheduling and Blynk IoT cloud synchronization.
                   </p>
                   <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
-                    <a href="https://journal.ijresm.com/index.php/ijresm/article/view/3402" target="_blank" class="btn-tactile btn-tactile-dark" onclick="event.stopPropagation()">Read Paper ↗</a>
-                    <a href="https://github.com/OmkarShirse/Smart-Egg-Incubation-System" target="_blank" class="btn-tactile btn-tactile-light" onclick="event.stopPropagation()">Firmware Repo ↗</a>
+                    <a href="projects/smart-egg-incubation.html" class="btn-tactile btn-tactile-dark" onclick="event.stopPropagation()">In-Depth Case Study &rarr;</a>
+                    <a href="https://journal.ijresm.com/index.php/ijresm/article/view/3402" target="_blank" class="btn-tactile btn-tactile-light" onclick="event.stopPropagation()">Read Paper ↗</a>
+                    <a href="https://github.com/OmkarShirse/Smart-Egg-Incubation-System" target="_blank" class="btn-tactile btn-tactile-light" onclick="event.stopPropagation()">GitHub ↗</a>
                   </div>
                 </div>
 
@@ -838,7 +839,8 @@
                     Trained as a 2-layer character GPT with symmetric <strong>Q8 quantization</strong>. Static weights are mapped into SPI Flash memory (~180 KB), delivering <strong>1–3 tokens/second</strong> with zero dynamic heap allocation.
                   </p>
                   <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
-                    <a href="https://github.com/OmkarShirse/tinyllm" target="_blank" class="btn-tactile btn-tactile-dark" onclick="event.stopPropagation()">View Source Code ↗</a>
+                    <a href="projects/tinyllm-transformer.html" class="btn-tactile btn-tactile-dark" onclick="event.stopPropagation()">In-Depth Case Study &rarr;</a>
+                    <a href="https://github.com/OmkarShirse/tinyllm" target="_blank" class="btn-tactile btn-tactile-light" onclick="event.stopPropagation()">GitHub Repo ↗</a>
                   </div>
                 </div>
 
@@ -892,7 +894,8 @@
                     This driver writes directly to the ESP32 hardware <strong>W1TS (0x3FF44004)</strong> and <strong>W1TC (0x3FF44008)</strong> atomic registers with <code>IRAM_ATTR</code> inlining, driving throughput to <strong>18.5 MHz (10.2x speedup)</strong> with zero race hazards.
                   </p>
                   <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
-                    <a href="https://github.com/OmkarShirse/Custom-Embedded-Driver" target="_blank" class="btn-tactile btn-tactile-dark" onclick="event.stopPropagation()">Driver Repository ↗</a>
+                    <a href="projects/esp32-custom-driver.html" class="btn-tactile btn-tactile-dark" onclick="event.stopPropagation()">In-Depth Case Study &rarr;</a>
+                    <a href="https://github.com/OmkarShirse/Custom-Embedded-Driver" target="_blank" class="btn-tactile btn-tactile-light" onclick="event.stopPropagation()">GitHub Repo ↗</a>
                   </div>
                 </div>
 
@@ -946,7 +949,8 @@
                     Implements fractional baud rate division, <strong>16x oversampling receiver state machines</strong> with center-bit majority voting across ticks 7, 8, and 9 to eliminate noise, and a 2-stage flip-flop synchronizer preventing clock domain metastability.
                   </p>
                   <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
-                    <button class="btn-tactile btn-tactile-dark" onclick="openSystemModal('uart'); event.stopPropagation();">Inspect RTL Spec</button>
+                    <a href="projects/fpga-uart-controller.html" class="btn-tactile btn-tactile-dark" onclick="event.stopPropagation()">In-Depth Case Study &rarr;</a>
+                    <a href="https://github.com/OmkarShirse/uart_controller" target="_blank" class="btn-tactile btn-tactile-light" onclick="event.stopPropagation()">GitHub Repo ↗</a>
                   </div>
                 </div>
 
@@ -1082,10 +1086,12 @@
     </div>
 
     <ul class="footer-links-row">
-      <li><a href="mailto:omkarshirse@gmail.com">omkarshirse@gmail.com</a></li>
+      <li><a href="projects/smart-egg-incubation.html">Smart Incubator</a></li>
+      <li><a href="projects/tinyllm-transformer.html">TinyLLM</a></li>
+      <li><a href="projects/esp32-custom-driver.html">Fast GPIO Driver</a></li>
+      <li><a href="projects/fpga-uart-controller.html">FPGA UART</a></li>
+      <li><a href="mailto:omkarshirse@gmail.com">Contact</a></li>
       <li><a href="https://github.com/OmkarShirse" target="_blank">GitHub</a></li>
-      <li><a href="https://linkedin.com/in/omkarshirse" target="_blank">LinkedIn</a></li>
-      <li><a href="https://journal.ijresm.com/index.php/ijresm/article/view/3402" target="_blank">IJRESM Paper</a></li>
     </ul>
   </div>
 </footer>
@@ -1139,9 +1145,10 @@
         <p style="margin-bottom:1.5rem; font-size:0.95rem; line-height:1.8; color:var(--ink-secondary);">
           <strong>Engineering Solution:</strong> Built with an ESP8266 running non-blocking state machines and Blynk IoT cloud synchronization. Optocoupled relays modulate thermal incandescent heating and ultrasonic mist generation with independent local autonomy if Wi-Fi drops out.
         </p>
-        <div style="display:flex; gap:1rem; flex-wrap:wrap;">
-          <a href="https://journal.ijresm.com/index.php/ijresm/article/view/3402" target="_blank" class="btn-tactile btn-tactile-dark">Read Published Paper in IJRESM ↗</a>
-          <a href="https://github.com/OmkarShirse/Smart-Egg-Incubation-System" target="_blank" class="btn-tactile btn-tactile-light">Source Code on GitHub ↗</a>
+        <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
+          <a href="projects/smart-egg-incubation.html" class="btn-tactile btn-tactile-dark">Read Full Case Study Page &rarr;</a>
+          <a href="https://journal.ijresm.com/index.php/ijresm/article/view/3402" target="_blank" class="btn-tactile btn-tactile-light">Published Paper ↗</a>
+          <a href="https://github.com/OmkarShirse/Smart-Egg-Incubation-System" target="_blank" class="btn-tactile btn-tactile-light">GitHub ↗</a>
         </div>
       `
     },
@@ -1155,7 +1162,10 @@
         <p style="margin-bottom:1.5rem; font-size:0.95rem; line-height:1.8; color:var(--ink-secondary);">
           Trained as a 2-layer character GPT with symmetric Q8 quantization. Static weights are stored in Flash memory (~180 KB), delivering 1–3 tokens/second with zero dynamic heap allocation.
         </p>
-        <a href="https://github.com/OmkarShirse/tinyllm" target="_blank" class="btn-tactile btn-tactile-dark">Explore TinyLLM Source ↗</a>
+        <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
+          <a href="projects/tinyllm-transformer.html" class="btn-tactile btn-tactile-dark">Read Full Case Study Page &rarr;</a>
+          <a href="https://github.com/OmkarShirse/tinyllm" target="_blank" class="btn-tactile btn-tactile-light">GitHub ↗</a>
+        </div>
       `
     },
     gpio: {
@@ -1168,7 +1178,10 @@
         <p style="margin-bottom:1.5rem; font-size:0.95rem; line-height:1.8; color:var(--ink-secondary);">
           This driver writes directly to the ESP32 hardware <strong>W1TS (0x3FF44004)</strong> and <strong>W1TC (0x3FF44008)</strong> atomic registers with <code>IRAM_ATTR</code> inlining, driving throughput to <strong>18.5 MHz</strong> with zero lock contention.
         </p>
-        <a href="https://github.com/OmkarShirse/Custom-Embedded-Driver" target="_blank" class="btn-tactile btn-tactile-dark">View Driver Repository ↗</a>
+        <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
+          <a href="projects/esp32-custom-driver.html" class="btn-tactile btn-tactile-dark">Read Full Case Study Page &rarr;</a>
+          <a href="https://github.com/OmkarShirse/Custom-Embedded-Driver" target="_blank" class="btn-tactile btn-tactile-light">GitHub ↗</a>
+        </div>
       `
     },
     uart: {
@@ -1178,6 +1191,10 @@
         <p style="margin-bottom:1.2rem; font-size:0.95rem; line-height:1.8; color:var(--ink-secondary);">
           Designed from gate primitives in VHDL for Artix-7 FPGAs. Implements fractional baud rate division, 16x oversampling RX state machines with center-bit majority voting, and 2-stage synchronization registers to eliminate metastability.
         </p>
+        <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
+          <a href="projects/fpga-uart-controller.html" class="btn-tactile btn-tactile-dark">Read Full Case Study Page &rarr;</a>
+          <a href="https://github.com/OmkarShirse/uart_controller" target="_blank" class="btn-tactile btn-tactile-light">GitHub ↗</a>
+        </div>
       `
     }
   };

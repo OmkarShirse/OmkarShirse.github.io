@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FPGA Full-Duplex UART Core in VHDL — Omkar Shirse</title>
+
+<!-- TYPOGRAPHY: Fraunces (Warm Editorial Serif) + Plus Jakarta Sans + JetBrains Mono -->
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+<style>
+  :root {
+    --bg-page: #f5f2eb;
+    --bg-card: #fdfcf9;
+    --bg-subtle: #eae5d9;
+    --bg-bezel: #e4ded2;
+    --ink-primary: #191613;
+    --ink-secondary: #524c44;
+    --ink-muted: #857e74;
+    --border-paper: rgba(25, 22, 19, 0.12);
+    --border-paper-strong: rgba(25, 22, 19, 0.24);
+    --sun-amber: #c56919;
+    --sun-amber-glow: rgba(197, 105, 25, 0.12);
+    --badge-bg: #eee8dc;
+    --shadow-soft: 0 4px 20px -2px rgba(40, 33, 23, 0.07), 0 1px 3px rgba(40, 33, 23, 0.04);
+    --shadow-card: 0 16px 36px -12px rgba(45, 36, 24, 0.12);
+
+    --font-serif: 'Fraunces', Georgia, serif;
+    --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 15px; }
+
+  body {
+    background-color: var(--bg-page);
+    color: var(--ink-primary);
+    font-family: var(--font-sans);
+    line-height: 1.65;
+    background-image: 
+      radial-gradient(circle at 10% 15%, var(--sun-amber-glow) 0%, transparent 45%),
+      radial-gradient(circle at 90% 85%, var(--sun-amber-glow) 0%, transparent 45%);
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  header.project-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(245, 242, 235, 0.94);
+    border-bottom: 1px solid var(--border-paper);
+    backdrop-filter: blur(14px);
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--ink-secondary);
+    transition: color 0.2s;
+  }
+  .back-btn:hover { color: var(--sun-amber); }
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .btn-pill {
+    padding: 7px 16px;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .btn-pill-dark {
+    background: var(--ink-primary);
+    color: var(--bg-page);
+    border: 1px solid var(--ink-primary);
+  }
+  .btn-pill-dark:hover {
+    background: var(--sun-amber);
+    border-color: var(--sun-amber);
+    color: #fff;
+  }
+
+  .article-wrap {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 4.5rem 2rem 8rem;
+  }
+
+  .meta-tag-cluster {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .badge-tag {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 3px 10px;
+    border: 1px solid var(--border-paper-strong);
+    border-radius: 999px;
+    color: var(--sun-amber);
+  }
+
+  .project-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2.6rem, 5.5vw, 4.2rem);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    color: var(--ink-primary);
+    margin-bottom: 1.5rem;
+  }
+  .project-subtitle {
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+    color: var(--ink-secondary);
+    line-height: 1.75;
+    margin-bottom: 2.5rem;
+    font-style: italic;
+  }
+
+  .telemetry-banner {
+    background: var(--bg-card);
+    border: 1px solid var(--border-paper);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: var(--shadow-soft);
+    margin-bottom: 4rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+  }
+  .telemetry-col h5 {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    margin-bottom: 0.4rem;
+  }
+  .telemetry-col .val {
+    font-family: var(--font-serif);
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--ink-primary);
+  }
+  .telemetry-col p {
+    font-size: 0.78rem;
+    color: var(--ink-secondary);
+  }
+
+  .content-section {
+    margin-bottom: 3.5rem;
+  }
+  .section-h2 {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--ink-primary);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .section-h2::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-paper);
+  }
+  p.lead-text {
+    font-size: 1.05rem;
+    color: var(--ink-secondary);
+    line-height: 1.85;
+    margin-bottom: 1.2rem;
+  }
+  p.body-text {
+    font-size: 0.95rem;
+    color: var(--ink-secondary);
+    line-height: 1.85;
+    margin-bottom: 1.2rem;
+  }
+  strong { color: var(--ink-primary); font-weight: 600; }
+
+  .diagram-box {
+    background: #191613;
+    color: #e5dfd3;
+    padding: 1.8rem;
+    border-radius: 12px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.6;
+    overflow-x: auto;
+    white-space: pre;
+    margin: 2rem 0;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin: 1.5rem 0 2.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-paper);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .data-table th, .data-table td {
+    padding: 0.9rem 1.2rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-paper);
+  }
+  .data-table th {
+    background: var(--bg-subtle);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--sun-amber);
+  }
+
+  .code-block {
+    background: #191613;
+    color: #f7f4ed;
+    border-radius: 12px;
+    padding: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    line-height: 1.65;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+  .kw { color: #f472b6; }
+  .fn { color: #60a5fa; }
+  .type { color: #fbbf24; }
+  .cm { color: #857e74; font-style: italic; }
+
+  .note-card {
+    background: var(--bg-card);
+    border-left: 3px solid var(--sun-amber);
+    border-radius: 0 12px 12px 0;
+    padding: 1.4rem 1.8rem;
+    margin: 2rem 0;
+    box-shadow: var(--shadow-soft);
+  }
+  .note-card h4 {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    margin-bottom: 0.4rem;
+    color: var(--ink-primary);
+  }
+  .note-card p {
+    font-size: 0.88rem;
+    color: var(--ink-secondary);
+    line-height: 1.75;
+  }
+
+  footer.page-footer {
+    border-top: 1px solid var(--border-paper);
+    padding: 3rem 2rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+  }
+</style>
+</head>
+<body>
+
+<header class="project-header">
+  <div class="header-inner">
+    <a href="../index.html" class="back-btn">
+      <span>&larr;</span>
+      <span>Return to Portfolio</span>
+    </a>
+
+    <div class="header-actions">
+      <a href="https://github.com/OmkarShirse/uart_controller" target="_blank" class="btn-pill btn-pill-dark">
+        <span>GitHub Repository</span>
+        <span>↗</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="article-wrap">
+
+  <div class="meta-tag-cluster">
+    <span class="badge-tag">PROJECT_04</span>
+    <span class="badge-tag">Silicon RTL Design &middot; VHDL</span>
+    <span class="badge-tag">Xilinx Vivado &middot; GHDL Verified</span>
+  </div>
+
+  <h1 class="project-title">Full-Duplex UART Core in VHDL</h1>
+  <p class="project-subtitle">
+    Synthesizable 8-N-1 serial transceiver designed from digital primitives with parameterized baud generation, 16x oversampling receiver state machines, and loopback testbench verification.
+  </p>
+
+  <!-- TELEMETRY BANNER -->
+  <div class="telemetry-banner">
+    <div class="telemetry-col">
+      <h5>Framing Standard</h5>
+      <div class="val">8-N-1</div>
+      <p>1 Start, 8 Data, 1 Stop</p>
+    </div>
+    <div class="telemetry-col">
+      <h5>Oversampling</h5>
+      <div class="val">16x Center</div>
+      <p>Majority voting filter</p>
+    </div>
+    <div class="telemetry-col">
+      <h5>Timing Generic</h5>
+      <div class="val">g_CLKS_PER_BIT</div>
+      <p>Parameterized clock divider</p>
+    </div>
+    <div class="telemetry-col">
+      <h5>Silicon Footprint</h5>
+      <div class="val">&lt; 85 Slices</div>
+      <p>Synthesized on Artix-7</p>
+    </div>
+  </div>
+
+  <!-- SECTION 1: ARCHITECTURAL OVERVIEW -->
+  <section class="content-section">
+    <h2 class="section-h2">01 / Silicon Serial Communication Fundamentals</h2>
+    <p class="lead-text">
+      While microcontrollers hide serial communication behind fixed hardware registers, implementing a UART on an FPGA requires building the underlying shift registers, bit-period timers, and asynchronous edge detectors directly in synthesizable RTL.
+    </p>
+    <p class="body-text">
+      The core converts parallel 8-bit bus bytes into a deterministic serial bitstream over a single physical trace and reconstructs incoming asynchronous serial streams without data loss.
+    </p>
+  </section>
+
+  <!-- SECTION 2: RECEIVER OVERSAMPLING STATE MACHINE -->
+  <section class="content-section">
+    <h2 class="section-h2">02 / Receiver 16x Oversampling Architecture</h2>
+    <p class="body-text">
+      Because the incoming serial stream is completely asynchronous to the local FPGA clock oscillator, the receiver cannot simply sample the input line at nominal bit intervals. 
+      The core implements a <strong>16x oversampling state machine</strong>:
+    </p>
+
+    <div class="diagram-box">
+Clock (e.g. 50 MHz) ──► [Baud Rate Clock Divider] ──► 16x Baud Ticks
+                                                               │
+     +─────────────────────────────────────────────────────────+
+     │
+     ▼
+[RX Pin] ──► [2-Stage Flip-Flop Synchronizer] ──► [Falling Edge Start-Bit Detector]
+                                                               │
+                                                               ▼
+                                               +───────────────────────────────+
+                                               | RX State Machine:             |
+                                               | &bull; Count 8 ticks to center    |
+                                               | &bull; Sample bits at ticks 7,8,9  |
+                                               | &bull; 3-sample majority voting   |
+                                               | &bull; Shift into 8-bit register  |
+                                               | &bull; Verify stop bit asserted   |
+                                               | &bull; Raise o_rx_dv valid flag   |
+                                               +───────────────────────────────+</div>
+  </section>
+
+  <!-- SECTION 3: TIMING GENERICS & MATH -->
+  <section class="content-section">
+    <h2 class="section-h2">03 / Parameterized Clock Divider Timing</h2>
+    <p class="body-text">
+      The timing of the entire core is parameterized via a single VHDL generic:
+    </p>
+    <div style="background:var(--bg-card); border:1px solid var(--border-paper); padding:1.5rem; border-radius:12px; margin: 1.5rem 0; font-family:var(--font-mono); font-size:0.9rem;">
+      g_CLKS_PER_BIT = (System Clock Frequency) / (Target Baud Rate)
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>System Clock</th>
+          <th>Baud Rate</th>
+          <th>Calculated `g_CLKS_PER_BIT`</th>
+          <th>Baud Error Rate</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>50.000 MHz</td>
+          <td>9,600 baud</td>
+          <td>5,208 clock cycles</td>
+          <td>&lt; 0.01% (Exact match)</td>
+        </tr>
+        <tr>
+          <td>50.000 MHz</td>
+          <td>115,200 baud</td>
+          <td>434 clock cycles</td>
+          <td>&lt; 0.08% (Well within &plusmn;2% UART tolerance)</td>
+        </tr>
+        <tr>
+          <td>100.000 MHz</td>
+          <td>115,200 baud</td>
+          <td>868 clock cycles</td>
+          <td>&lt; 0.04%</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SECTION 4: CODE HIGHLIGHT: VHDL ARCHITECTURE -->
+  <section class="content-section">
+    <h2 class="section-h2">04 / Synthesizable VHDL Core Implementation</h2>
+    <div class="code-block">
+<span class="kw">entity</span> <span class="fn">uart_tx</span> <span class="kw">is</span>
+  <span class="kw">generic</span> (
+    g_CLKS_PER_BIT : <span class="type">integer</span> := <span class="num">868</span>  <span class="cm">-- 100 MHz clock / 115200 baud</span>
+  );
+  <span class="kw">port</span> (
+    i_clk       : <span class="kw">in</span>  <span class="type">std_logic</span>;
+    i_tx_dv     : <span class="kw">in</span>  <span class="type">std_logic</span>;
+    i_tx_byte   : <span class="kw">in</span>  <span class="type">std_logic_vector</span>(<span class="num">7</span> <span class="kw">downto</span> <span class="num">0</span>);
+    o_tx_active : <span class="kw">out</span> <span class="type">std_logic</span>;
+    o_tx_serial : <span class="kw">out</span> <span class="type">std_logic</span>;
+    o_tx_done   : <span class="kw">out</span> <span class="type">std_logic</span>
+  );
+<span class="kw">end</span> <span class="fn">uart_tx</span>;
+    </div>
+
+    <div class="note-card">
+      <h4>Self-Contained Verification: `UART_TB.vhd` &amp; GHDL</h4>
+      <p>
+        The repository includes an automated loopback testbench connecting the transmitter serial output directly to the receiver input. 
+        It sequentially transmits test patterns <code>0xA5</code> (10100101) and <code>0x3C</code> (00111100), asserting frame completion flags and verifying identical byte reconstruction. 
+        Packaged with a one-click simulation script <code>run_sim.sh</code> for GHDL and GTKWave.
+      </p>
+    </div>
+  </section>
+
+  <!-- SECTION 5: ROADMAP -->
+  <section class="content-section">
+    <h2 class="section-h2">05 / Hardware Roadmap &amp; Scope</h2>
+    <ul style="margin: 0 0 1.5rem 1.5rem; font-size:0.92rem; color:var(--ink-secondary); line-height:1.8;">
+      <li><strong>Hardware Parity Generation:</strong> Adding configurable even/odd parity bit insertion and parity error flags.</li>
+      <li><strong>Synchronous Dual-Clock FIFO Buffers:</strong> Decoupling the peripheral bus clock domain from serial burst arrival.</li>
+      <li><strong>Baud Auto-Detection:</strong> Measuring the pulse width of standard ASCII carriage returns to calibrate <code>g_CLKS_PER_BIT</code> dynamically.</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer class="page-footer">
+  <p>&copy; 2026 Omkar Shirse &middot; Embedded Systems &amp; Silicon Architecture &middot; Pune, India</p>
+</footer>
+
+</body>
+</html>

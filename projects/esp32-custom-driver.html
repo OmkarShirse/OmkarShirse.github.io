@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ESP32 Fast Driver &amp; Sensor Fusion — Omkar Shirse</title>
+
+<!-- TYPOGRAPHY: Fraunces (Warm Editorial Serif) + Plus Jakarta Sans + JetBrains Mono -->
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+<style>
+  :root {
+    --bg-page: #f5f2eb;
+    --bg-card: #fdfcf9;
+    --bg-subtle: #eae5d9;
+    --bg-bezel: #e4ded2;
+    --ink-primary: #191613;
+    --ink-secondary: #524c44;
+    --ink-muted: #857e74;
+    --border-paper: rgba(25, 22, 19, 0.12);
+    --border-paper-strong: rgba(25, 22, 19, 0.24);
+    --sun-amber: #c56919;
+    --sun-amber-glow: rgba(197, 105, 25, 0.12);
+    --badge-bg: #eee8dc;
+    --shadow-soft: 0 4px 20px -2px rgba(40, 33, 23, 0.07), 0 1px 3px rgba(40, 33, 23, 0.04);
+    --shadow-card: 0 16px 36px -12px rgba(45, 36, 24, 0.12);
+
+    --font-serif: 'Fraunces', Georgia, serif;
+    --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 15px; }
+
+  body {
+    background-color: var(--bg-page);
+    color: var(--ink-primary);
+    font-family: var(--font-sans);
+    line-height: 1.65;
+    background-image: 
+      radial-gradient(circle at 10% 15%, var(--sun-amber-glow) 0%, transparent 45%),
+      radial-gradient(circle at 90% 85%, var(--sun-amber-glow) 0%, transparent 45%);
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  header.project-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(245, 242, 235, 0.94);
+    border-bottom: 1px solid var(--border-paper);
+    backdrop-filter: blur(14px);
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--ink-secondary);
+    transition: color 0.2s;
+  }
+  .back-btn:hover { color: var(--sun-amber); }
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .btn-pill {
+    padding: 7px 16px;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .btn-pill-dark {
+    background: var(--ink-primary);
+    color: var(--bg-page);
+    border: 1px solid var(--ink-primary);
+  }
+  .btn-pill-dark:hover {
+    background: var(--sun-amber);
+    border-color: var(--sun-amber);
+    color: #fff;
+  }
+
+  .article-wrap {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 4.5rem 2rem 8rem;
+  }
+
+  .meta-tag-cluster {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .badge-tag {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 3px 10px;
+    border: 1px solid var(--border-paper-strong);
+    border-radius: 999px;
+    color: var(--sun-amber);
+  }
+
+  .project-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2.6rem, 5.5vw, 4.2rem);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    color: var(--ink-primary);
+    margin-bottom: 1.5rem;
+  }
+  .project-subtitle {
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+    color: var(--ink-secondary);
+    line-height: 1.75;
+    margin-bottom: 2.5rem;
+    font-style: italic;
+  }
+
+  .telemetry-banner {
+    background: var(--bg-card);
+    border: 1px solid var(--border-paper);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: var(--shadow-soft);
+    margin-bottom: 4rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+  }
+  .telemetry-col h5 {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    margin-bottom: 0.4rem;
+  }
+  .telemetry-col .val {
+    font-family: var(--font-serif);
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--ink-primary);
+  }
+  .telemetry-col p {
+    font-size: 0.78rem;
+    color: var(--ink-secondary);
+  }
+
+  .content-section {
+    margin-bottom: 3.5rem;
+  }
+  .section-h2 {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--ink-primary);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .section-h2::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-paper);
+  }
+  p.lead-text {
+    font-size: 1.05rem;
+    color: var(--ink-secondary);
+    line-height: 1.85;
+    margin-bottom: 1.2rem;
+  }
+  p.body-text {
+    font-size: 0.95rem;
+    color: var(--ink-secondary);
+    line-height: 1.85;
+    margin-bottom: 1.2rem;
+  }
+  strong { color: var(--ink-primary); font-weight: 600; }
+
+  .diagram-box {
+    background: #191613;
+    color: #e5dfd3;
+    padding: 1.8rem;
+    border-radius: 12px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.6;
+    overflow-x: auto;
+    white-space: pre;
+    margin: 2rem 0;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin: 1.5rem 0 2.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-paper);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .data-table th, .data-table td {
+    padding: 0.9rem 1.2rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-paper);
+  }
+  .data-table th {
+    background: var(--bg-subtle);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--sun-amber);
+  }
+
+  .code-block {
+    background: #191613;
+    color: #f7f4ed;
+    border-radius: 12px;
+    padding: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    line-height: 1.65;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+  .kw { color: #f472b6; }
+  .fn { color: #60a5fa; }
+  .type { color: #fbbf24; }
+  .cm { color: #857e74; font-style: italic; }
+
+  .note-card {
+    background: var(--bg-card);
+    border-left: 3px solid var(--sun-amber);
+    border-radius: 0 12px 12px 0;
+    padding: 1.4rem 1.8rem;
+    margin: 2rem 0;
+    box-shadow: var(--shadow-soft);
+  }
+  .note-card h4 {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    margin-bottom: 0.4rem;
+    color: var(--ink-primary);
+  }
+  .note-card p {
+    font-size: 0.88rem;
+    color: var(--ink-secondary);
+    line-height: 1.75;
+  }
+
+  footer.page-footer {
+    border-top: 1px solid var(--border-paper);
+    padding: 3rem 2rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+  }
+</style>
+</head>
+<body>
+
+<header class="project-header">
+  <div class="header-inner">
+    <a href="../index.html" class="back-btn">
+      <span>&larr;</span>
+      <span>Return to Portfolio</span>
+    </a>
+
+    <div class="header-actions">
+      <a href="https://github.com/OmkarShirse/Custom-Embedded-Driver" target="_blank" class="btn-pill btn-pill-dark">
+        <span>GitHub Repository</span>
+        <span>↗</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="article-wrap">
+
+  <div class="meta-tag-cluster">
+    <span class="badge-tag">PROJECT_03</span>
+    <span class="badge-tag">Bare-Metal C99 &middot; ESP-IDF v5</span>
+    <span class="badge-tag">FreeRTOS Multi-Core ISR Pipeline</span>
+  </div>
+
+  <h1 class="project-title">ESP32 Fast GPIO &amp; Sensor Fusion Pipeline</h1>
+  <p class="project-subtitle">
+    Production-grade register-level embedded firmware stack featuring atomic zero-overhead GPIO, 400 kHz I2C master HAL, 14-byte atomic IMU burst reads, and FreeRTOS attitude estimation.
+  </p>
+
+  <!-- TELEMETRY BANNER -->
+  <div class="telemetry-banner">
+    <div class="telemetry-col">
+      <h5>Peak Toggle Rate</h5>
+      <div class="val">18.5 MHz</div>
+      <p>10.2x speedup vs HAL</p>
+    </div>
+    <div class="telemetry-col">
+      <h5>Lock Overhead</h5>
+      <div class="val">Zero Locks</div>
+      <p>Hardware W1TS / W1TC registers</p>
+    </div>
+    <div class="telemetry-col">
+      <h5>I2C Transaction</h5>
+      <div class="val">14B Atomic</div>
+      <p>Zero inter-axis sample skew</p>
+    </div>
+    <div class="telemetry-col">
+      <h5>DSP Filtering</h5>
+      <div class="val">6-DOF AHRS</div>
+      <p>Madgwick + Complementary</p>
+    </div>
+  </div>
+
+  <!-- SECTION 1: MOTIVATION -->
+  <section class="content-section">
+    <h2 class="section-h2">01 / Motivation: Bypassing Vendor Hal Bloat</h2>
+    <p class="lead-text">
+      Standard vendor SDKs prioritize generality and safety at the expense of deterministic execution time. In ESP-IDF, every single call to <code>gpio_set_level()</code> executes a spinlock critical section (<code>portENTER_CRITICAL</code>), executes range boundary branch logic, and suffers unpredictable flash-cache stalls.
+    </p>
+    <p class="body-text">
+      For bit-banging communication protocols (DShot, WS2812, fast parallel displays) and high-rate sensor polling, spinlock overhead limits performance to ~1.8 MHz. 
+      This stack was engineered in pure C99 to provide a <strong>zero-lock, register-level architecture</strong> with modular ESP-IDF v5 components.
+    </p>
+  </section>
+
+  <!-- SECTION 2: SYSTEM ARCHITECTURE -->
+  <section class="content-section">
+    <h2 class="section-h2">02 / FreeRTOS Concurrency Architecture</h2>
+    <div class="diagram-box">
+[ MPU-6050 INT Pin ] ──► (Hardware ISR)
+                              │ vTaskNotifyGiveFromISR()
+                              ▼
+                   +---------------------+
+                   |     sensor_task     | (Priority 3 - Core 1)
+                   |  14-Byte Burst Read |
+                   +----------┬----------+
+                              │ xQueueSend(s_raw_queue)
+                              ▼
+                   +---------------------+
+                   |   processing_task   | (Priority 2 - Core 1)
+                   |  Moving Avg + AHRS  |
+                   +----------┬----------+
+                              │ xQueueSend(s_telemetry_queue)
+                              ▼
+                   +---------------------+
+                   |   telemetry_task    | (Priority 1 - Core 0)
+                   |  ESP_LOG + LED Blink|
+                   +---------------------+</div>
+  </section>
+
+  <!-- SECTION 3: COMPONENT BREAKDOWN -->
+  <section class="content-section">
+    <h2 class="section-h2">03 / Component Breakdown &amp; Silicon Implementation</h2>
+
+    <h3 style="font-family:var(--font-serif); font-size:1.4rem; margin:1.5rem 0 0.8rem;">1. Fast GPIO Register Driver (`components/gpio_fast`)</h3>
+    <p class="body-text">
+      Replaces slow SDK calls with direct writes to the memory-mapped GPIO controller:
+    </p>
+    <ul style="margin: 0 0 1.2rem 1.5rem; font-size: 0.95rem; color: var(--ink-secondary); line-height: 1.8;">
+      <li><code>GPIO_OUT_W1TS_REG (0x3FF44008)</code>: Write-1-To-Set asserts pins HIGH atomically without reading prior state.</li>
+      <li><code>GPIO_OUT_W1TC_REG (0x3FF4400C)</code>: Write-1-To-Clear asserts pins LOW atomically.</li>
+      <li><strong>IRAM Resident:</strong> Marked <code>IRAM_ATTR</code> and <code>always_inline</code> to guarantee execution during flash cache write-erase windows.</li>
+    </ul>
+
+    <div class="code-block">
+<span class="cm">// gpio.h &mdash; Hot-path IRAM inlined register control</span>
+<span class="kw">static</span> <span class="kw">inline</span> <span class="type">void</span> <span class="fn">IRAM_ATTR</span> <span class="fn">gpio_fast_set</span>(<span class="type">uint8_t</span> pin) {
+    <span class="kw">if</span> (pin &lt; <span class="num">32</span>) {
+        <span class="fn">REG_WRITE</span>(GPIO_OUT_W1TS_REG, (<span class="num">1UL</span> &lt;&lt; pin));
+    } <span class="kw">else</span> {
+        <span class="fn">REG_WRITE</span>(GPIO_OUT1_W1TS_REG, (<span class="num">1UL</span> &lt;&lt; (pin - <span class="num">32</span>)));
+    }
+}
+
+<span class="kw">static</span> <span class="kw">inline</span> <span class="type">void</span> <span class="fn">IRAM_ATTR</span> <span class="fn">gpio_fast_clear</span>(<span class="type">uint8_t</span> pin) {
+    <span class="kw">if</span> (pin &lt; <span class="num">32</span>) {
+        <span class="fn">REG_WRITE</span>(GPIO_OUT_W1TC_REG, (<span class="num">1UL</span> &lt;&lt; pin));
+    } <span class="kw">else</span> {
+        <span class="fn">REG_WRITE</span>(GPIO_OUT1_W1TC_REG, (<span class="num">1UL</span> &lt;&lt; (pin - <span class="num">32</span>)));
+    }
+}
+    </div>
+
+    <h3 style="font-family:var(--font-serif); font-size:1.4rem; margin:2rem 0 0.8rem;">2. MPU-6050 14-Byte Atomic Burst Read</h3>
+    <p class="body-text">
+      Sequential I2C reads of separate sensor axes introduce temporal skew. This driver executes a single continuous 14-byte burst read starting at <code>ACCEL_XOUT_H (0x3B)</code>:
+      [Accel X, Y, Z] &rarr; [Temp] &rarr; [Gyro X, Y, Z]. All axes are captured within the same internal ADC sample window.
+    </p>
+
+    <h3 style="font-family:var(--font-serif); font-size:1.4rem; margin:2rem 0 0.8rem;">3. DSP &amp; Attitude Estimation</h3>
+    <p class="body-text">
+      The firmware deploys an $O(1)$ ring-buffer Moving Average filter to cancel high-frequency vibration, and combines it with a 6-DOF Madgwick Quaternion filter with fast inverse square root optimization to eliminate low-frequency gyroscope drift.
+    </p>
+  </section>
+
+  <!-- SECTION 4: BENCHMARK TABLE -->
+  <section class="content-section">
+    <h2 class="section-h2">04 / Performance Benchmarks</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Operation</th>
+          <th>ESP-IDF Standard HAL</th>
+          <th>Our Fast Driver Stack</th>
+          <th>Improvement Factor</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Single Pin Toggle Rate</td>
+          <td>~1.8 MHz</td>
+          <td><strong>18.5 MHz</strong></td>
+          <td><strong>10.2x speedup</strong></td>
+        </tr>
+        <tr>
+          <td>Batch Write (4 Pins)</td>
+          <td>4 calls &times; spinlock</td>
+          <td><strong>1 register write</strong></td>
+          <td><strong>4x instruction reduction</strong></td>
+        </tr>
+        <tr>
+          <td>IMU Burst Read Latency</td>
+          <td>~1.4 ms (split reads)</td>
+          <td><strong>0.42 ms (14B burst)</strong></td>
+          <td><strong>3.3x throughput</strong></td>
+        </tr>
+        <tr>
+          <td>Flash Cache Miss Jitter</td>
+          <td>&plusmn;45 ns variance</td>
+          <td><strong>&lt; 2 ns (IRAM resident)</strong></td>
+          <td><strong>Deterministic timing</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+</main>
+
+<footer class="page-footer">
+  <p>&copy; 2026 Omkar Shirse &middot; Embedded Systems &amp; Silicon Architecture &middot; Pune, India</p>
+</footer>
+
+</body>
+</html>
